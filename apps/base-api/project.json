@@ -1,0 +1,24 @@
+{
+  "name": "base-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/base-api/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "base-api:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "base-api:build:development"
+        },
+        "production": {
+          "buildTarget": "base-api:build:production"
+        }
+      }
+    }
+  }
+}
