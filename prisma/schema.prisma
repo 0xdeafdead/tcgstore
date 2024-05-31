@@ -26,8 +26,8 @@ model Item {
   id          String    @id @unique 
   name        String    @db.VarChar(100)
   price       Float     @db.DoublePrecision
-  createdAt   DateTime  @default(now()) @db.Date
-  updatedAt   DateTime  @updatedAt @db.Date
+  createdAt   DateTime  @default(now()) @db.Timestamp()
+  updatedAt   DateTime  @updatedAt @db.Timestamp()
   owner       User      @relation(fields: [ownerId], references: [id])
   ownerId     String
 }
