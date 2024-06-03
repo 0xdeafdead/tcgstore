@@ -2,7 +2,11 @@ import { Item } from '@prisma/client';
 import { BaseRepository } from '../utils/BaseRepository.repository';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma-service/prisma.service';
+import { CreateItemDTO } from './DTOs/createItem.dto';
 
+export interface CreateInput extends CreateItemDTO {
+  id: string;
+}
 @Injectable()
 export class ItemRepository implements BaseRepository<Item> {
   constructor(private readonly prisma: PrismaService) {}
@@ -11,7 +15,7 @@ export class ItemRepository implements BaseRepository<Item> {
     return await this.prisma.item.findMany();
   }
 
-  async create(input: Partial<Item>): Promise<Item> {
+  async create(input: CreateInput): Promise<Item> {
     return await this.prisma.item.create({
       data: {
         id: input.id,

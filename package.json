@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "serve-app": "npx nx serve base-api"
+    "serve-app": "npx nx serve base-api",
+    "test": "npx jest --watch"
   },
   "private": true,
   "dependencies": {
@@ -12,6 +13,7 @@
     "@nestjs/platform-express": "^10.0.2",
     "@prisma/client": "^5.13.0",
     "axios": "^1.6.0",
+    "dayjs": "^1.11.11",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0"

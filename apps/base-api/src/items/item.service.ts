@@ -9,13 +9,15 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import { ItemRepository } from './item.repository';
+import { CreateInput, ItemRepository } from './item.repository';
 import { CreateItemDTO } from './DTOs/createItem.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class ItemService {
   private readonly logger = new Logger('ItemService');
   constructor(private readonly repository: ItemRepository) {}
+
   getAllItems(): Observable<Item[]> {
     return from(this.repository.all()).pipe(
       catchError((err) => {
@@ -42,7 +44,8 @@ export class ItemService {
   }
 
   createItem(input: CreateItemDTO): Observable<Item> {
-    return from(this.repository.create(input)).pipe(
+    const newInput: CreateInput = { ...input, id: randomUUID() };
+    return from(this.repository.create(newInput)).pipe(
       catchError((err) => {
         this.logger.error(err.message);
         return throwError(() => err);
