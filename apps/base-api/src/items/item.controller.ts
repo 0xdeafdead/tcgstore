@@ -8,22 +8,22 @@ import { CreateItemDTO } from './DTOs/createItem.dto';
 export class ItemController {
   constructor(private readonly service: ItemService) {}
   @Get()
-  getAllUsers(): Observable<Item[]> {
+  getAllItems(): Observable<Item[]> {
     return this.service.getAllItems();
   }
 
   @Get('/:id')
-  getOne(@Param('id') id: string): Observable<Item> {
+  getItem(@Param('id') id: string): Observable<Item> {
     return this.service.getOneItem(id);
   }
 
   @Post()
-  createUser(@Body('input') input: CreateItemDTO): Observable<Item> {
+  createItem(@Body('input') input: CreateItemDTO): Observable<Item> {
     return this.service.createItem(input);
   }
 
   @Delete('/:id')
-  deleteUser(@Param('id') id: string): Observable<boolean> {
+  deleteItem(@Param('id') id: string): Observable<boolean> {
     return this.service.deleteItem(id);
   }
 }
