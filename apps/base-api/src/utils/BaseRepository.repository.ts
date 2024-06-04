@@ -1,23 +1,20 @@
-import { IBaseRepository } from './IBaseRespositoy';
-
 export class BaseRepository<T> {
- 
   async all(): Promise<T[]> {
     return undefined;
   }
   async create(input: Partial<T>): Promise<T> {
-    return undefined;
+    return;
   }
   async getOne(id: string): Promise<T> {
-    return undefined;
+    return;
   }
-  async getMany(filters: Partial<T>): Promise<T[]> {
-    return undefined;
+  async getMany(filters: unknown): Promise<T[]> {
+    return;
   }
-  async update(input: Partial<T>): Promise<T> {
-    return undefined;
+  async update(input: unknown): Promise<T> {
+    return;
   }
   async delete(id: string): Promise<T> {
-    return undefined;
+    return;
   }
 }

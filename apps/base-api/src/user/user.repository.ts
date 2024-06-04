@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { BaseRepository } from '../utils/BaseRepository.repository';
 import { PrismaService } from '../prisma-service/prisma.service';
-import { CreateUserDTO } from './DTOs/createUser.dto';
 
 @Injectable()
 export class UserRespository implements BaseRepository<User> {
@@ -13,9 +12,8 @@ export class UserRespository implements BaseRepository<User> {
     return users;
   }
 
-  async create(input: User): Promise<User> {
-    const newUser = await this.prisma.user.create({ data: input });
-    return newUser;
+  async create(input: Prisma.UserCreateInput): Promise<User> {
+    return this.prisma.user.create({ data: input });
   }
 
   async getOne(id: string): Promise<User> {
@@ -26,12 +24,8 @@ export class UserRespository implements BaseRepository<User> {
     });
   }
 
-  async getMany(filters: Partial<User>): Promise<User[]> {
-    return this.prisma.user.findMany({
-      where: {
-        rank: { equals: filters.rank },
-      },
-    });
+  async getMany(filters: Prisma.UserFindManyArgs): Promise<User[]> {
+    return this.prisma.user.findMany(filters);
   }
 
   async update(input: Partial<User>): Promise<User> {
