@@ -5,6 +5,7 @@ import { Item } from '@prisma/client';
 import dayjs from 'dayjs';
 import { of } from 'rxjs';
 import { CreateItemDTO } from './DTOs/createItem.dto';
+import { UpdateItemDTO } from './DTOs/updateItem.dto';
 
 describe('ItemController', () => {
   let controller: ItemController;
@@ -35,6 +36,7 @@ describe('ItemController', () => {
     getOneItem: jest.fn(),
     createItem: jest.fn(),
     deleteItem: jest.fn(),
+    updateItem: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -95,6 +97,24 @@ describe('ItemController', () => {
       controller.createItem(inputTemplate).subscribe({
         next: (res) => {
           expect(mockService.getAllItems).toHaveBeenCalledTimes(1);
+          expect(res).toMatchObject(mockItems[0]);
+          done();
+        },
+      });
+    });
+  });
+
+  describe('updateItem', () => {
+    const id = 'item_01';
+    const inputTemplace: UpdateItemDTO = {
+      name: 'newItemName',
+      price: 99.12,
+    };
+    it('should return Item', (done) => {
+      mockService.updateItem.mockReturnValueOnce(of(mockItems[0]));
+      controller.updateItem(id, inputTemplace).subscribe({
+        next: (res) => {
+          expect(mockService.updateItem).toHaveBeenCalledTimes(1);
           expect(res).toMatchObject(mockItems[0]);
           done();
         },
