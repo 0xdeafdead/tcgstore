@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import { Item } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  ConflictException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';

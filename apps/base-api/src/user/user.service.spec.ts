@@ -174,4 +174,31 @@ describe('UserService', () => {
       });
     });
   });
+
+  describe('deleteUser', () => {
+    const id = 'user_01';
+    it('should return an error when deletion fails', (done) => {
+      mockRepository.delete.mockRejectedValueOnce(
+        new InternalServerErrorException()
+      );
+      service.deleteUser(id).subscribe({
+        error: (err) => {
+          expect(mockRepository.delete).toHaveBeenCalledTimes(1);
+          expect(err).toBeInstanceOf(InternalServerErrorException);
+          done();
+        },
+      });
+    });
+
+    it('should return an error when deletion fails', (done) => {
+      mockRepository.delete.mockResolvedValueOnce(mockUsers[0]);
+      service.deleteUser(id).subscribe({
+        next: (res) => {
+          expect(mockRepository.delete).toHaveBeenCalledTimes(1);
+          expect(res).toBeTruthy();
+          done();
+        },
+      });
+    });
+  });
 });
