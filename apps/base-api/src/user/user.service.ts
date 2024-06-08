@@ -28,7 +28,7 @@ export class UserService {
   }
 
   getOneUser(id: string): Observable<User> {
-    return from(this.repository.getOne(id)).pipe(
+    return from(this.repository.getOne({ where: { id } })).pipe(
       switchMap((user) => {
         if (!user) {
           throw new NotFoundException('Could not find user with specified id');
@@ -60,7 +60,7 @@ export class UserService {
   }
 
   deleteUser(id: string): Observable<boolean> {
-    return from(this.repository.delete(id)).pipe(
+    return from(this.repository.delete({ where: { id } })).pipe(
       map(() => true),
       catchError((err) => {
         this.logger.error(err.message);

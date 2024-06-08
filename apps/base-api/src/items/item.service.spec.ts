@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import { Item } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  ConflictException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +10,7 @@ import {
 import { ItemService } from './item.service';
 import { ItemRepository } from './item.repository';
 import { CreateItemDTO } from './DTOs/createItem.dto';
+import { UpdateItemDTO } from './DTOs/updateItem.dto';
 
 describe('ItemService', () => {
   let service: ItemService;
@@ -36,11 +36,12 @@ describe('ItemService', () => {
     },
   ];
 
-  const mockItemRepo = {
+  const mockRepository = {
     all: jest.fn(),
     getOne: jest.fn(),
     create: jest.fn(),
     delete: jest.fn(),
+    update: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -49,7 +50,7 @@ describe('ItemService', () => {
         ItemService,
         {
           provide: ItemRepository,
-          useValue: mockItemRepo,
+          useValue: mockRepository,
         },
       ],
     }).compile();
@@ -68,12 +69,14 @@ describe('ItemService', () => {
   });
 
   describe('getAllItems', () => {
-    it('should return a ConflictException when fail', (done) => {
-      const testError = new ConflictException('Could not create item');
-      mockItemRepo.all.mockRejectedValueOnce(testError);
+    it('should return a InternalServerException when fail', (done) => {
+      const testError = new InternalServerErrorException(
+        'Could not create item'
+      );
+      mockRepository.all.mockRejectedValueOnce(testError);
       service.getAllItems().subscribe({
         error: (err) => {
-          expect(mockItemRepo.all).toHaveBeenCalledTimes(1);
+          expect(mockRepository.all).toHaveBeenCalledTimes(1);
           expect(err).toMatchObject(testError);
           done();
         },
@@ -81,10 +84,10 @@ describe('ItemService', () => {
     });
 
     it('should return an array of items', (done) => {
-      mockItemRepo.all.mockResolvedValueOnce(mockItems);
+      mockRepository.all.mockResolvedValueOnce(mockItems);
       service.getAllItems().subscribe({
         next: (res) => {
-          expect(mockItemRepo.all).toHaveBeenCalledTimes(1);
+          expect(mockRepository.all).toHaveBeenCalledTimes(1);
           expect(Array.isArray(res)).toBeTruthy();
           expect(res).toMatchObject(res);
           done();
@@ -99,11 +102,11 @@ describe('ItemService', () => {
       const testError = new InternalServerErrorException(
         'Could not retrieve item'
       );
-      mockItemRepo.getOne.mockRejectedValueOnce(testError);
+      mockRepository.getOne.mockRejectedValueOnce(testError);
       service.getOneItem(id).subscribe({
         error: (err) => {
-          expect(mockItemRepo.getOne).toHaveBeenCalledTimes(1);
-          expect(mockItemRepo.getOne).toHaveBeenCalledWith(id);
+          expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
+          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(err).toMatchObject(testError);
           done();
         },
@@ -111,11 +114,11 @@ describe('ItemService', () => {
     });
 
     it('should return an NotFoundException if repository fails ', (done) => {
-      mockItemRepo.getOne.mockResolvedValueOnce(null);
+      mockRepository.getOne.mockResolvedValueOnce(null);
       service.getOneItem(id).subscribe({
         error: (err) => {
-          expect(mockItemRepo.getOne).toHaveBeenCalledTimes(1);
-          expect(mockItemRepo.getOne).toHaveBeenCalledWith(id);
+          expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
+          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(err).toBeInstanceOf(NotFoundException);
           done();
         },
@@ -123,11 +126,11 @@ describe('ItemService', () => {
     });
 
     it('should return an item', (done) => {
-      mockItemRepo.getOne.mockResolvedValueOnce(mockItems[0]);
+      mockRepository.getOne.mockResolvedValueOnce(mockItems[0]);
       service.getOneItem(id).subscribe({
         next: (res) => {
-          expect(mockItemRepo.getOne).toHaveBeenCalledTimes(1);
-          expect(mockItemRepo.getOne).toHaveBeenCalledWith(id);
+          expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
+          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(res).toMatchObject(mockItems[0]);
           done();
         },
@@ -148,11 +151,11 @@ describe('ItemService', () => {
 
     it('should return an InternalServerException if repository fails', (done) => {
       const testError = new InternalServerErrorException();
-      mockItemRepo.create.mockRejectedValueOnce(testError);
+      mockRepository.create.mockRejectedValueOnce(testError);
       service.createItem(inputTemplate).subscribe({
         error: (err) => {
-          expect(mockItemRepo.create).toHaveBeenCalledTimes(1);
-          expect(mockItemRepo.create).toHaveBeenCalledWith({
+          expect(mockRepository.create).toHaveBeenCalledTimes(1);
+          expect(mockRepository.create).toHaveBeenCalledWith({
             ...inputTemplate,
             id: notRandomUUID,
           });
@@ -163,11 +166,11 @@ describe('ItemService', () => {
     });
 
     it('should return an item ', (done) => {
-      mockItemRepo.create.mockResolvedValueOnce(mockItems[0]);
+      mockRepository.create.mockResolvedValueOnce(mockItems[0]);
       service.createItem(inputTemplate).subscribe({
         next: (res) => {
-          expect(mockItemRepo.create).toHaveBeenCalledTimes(1);
-          expect(mockItemRepo.create).toHaveBeenCalledWith({
+          expect(mockRepository.create).toHaveBeenCalledTimes(1);
+          expect(mockRepository.create).toHaveBeenCalledWith({
             ...inputTemplate,
             id: notRandomUUID,
           });
@@ -178,15 +181,39 @@ describe('ItemService', () => {
     });
   });
 
+  describe('updateItem', () => {
+    const id = 'item_01';
+    const inputTemplate: UpdateItemDTO = {
+      name: 'newItemName',
+      price: 999.99,
+    };
+    it('should return an error when updating fail', (done) => {
+      mockRepository.update.mockRejectedValueOnce(
+        new Error('Failed to update')
+      );
+      service.updateItem(id, inputTemplate).subscribe({
+        error: (err) => {
+          expect(mockRepository.update).toHaveBeenCalledTimes(1);
+          expect(mockRepository.update).toHaveBeenCalledWith({
+            data: inputTemplate,
+            where: { id },
+          });
+          expect(err).toBeInstanceOf(Error);
+          done();
+        },
+      });
+    });
+  });
+
   describe('deleteItem', () => {
     const id = 'item_01';
     it('should return an error when deletion fails', (done) => {
-      mockItemRepo.delete.mockRejectedValueOnce(
+      mockRepository.delete.mockRejectedValueOnce(
         new InternalServerErrorException()
       );
       service.deleteItem(id).subscribe({
         error: (err) => {
-          expect(mockItemRepo.delete).toHaveBeenCalledTimes(1);
+          expect(mockRepository.delete).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
         },
@@ -194,10 +221,10 @@ describe('ItemService', () => {
     });
 
     it('should return an error when deletion fails', (done) => {
-      mockItemRepo.delete.mockResolvedValueOnce(mockItems[0]);
+      mockRepository.delete.mockResolvedValueOnce(mockItems[0]);
       service.deleteItem(id).subscribe({
         next: (res) => {
-          expect(mockItemRepo.delete).toHaveBeenCalledTimes(1);
+          expect(mockRepository.delete).toHaveBeenCalledTimes(1);
           expect(res).toBeTruthy();
           done();
         },

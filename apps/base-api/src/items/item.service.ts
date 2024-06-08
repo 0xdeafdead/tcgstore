@@ -12,6 +12,7 @@ import {
 import { CreateInput, ItemRepository } from './item.repository';
 import { CreateItemDTO } from './DTOs/createItem.dto';
 import { randomUUID } from 'crypto';
+import { UpdateItemDTO } from './DTOs/updateItem.dto';
 
 @Injectable()
 export class ItemService {
@@ -28,7 +29,7 @@ export class ItemService {
   }
 
   getOneItem(id: string): Observable<Item> {
-    return from(this.repository.getOne(id)).pipe(
+    return from(this.repository.getOne({ where: { id } })).pipe(
       switchMap((user) => {
         if (!user) {
           throw new NotFoundException('Could not find item with specified id');
@@ -53,8 +54,12 @@ export class ItemService {
     );
   }
 
+  updateItem(id: string, input: UpdateItemDTO): Observable<Item> {
+    return from(this.repository.update({ data: input, where: { id } }));
+  }
+
   deleteItem(id: string): Observable<boolean> {
-    return from(this.repository.delete(id)).pipe(
+    return from(this.repository.delete({ where: { id } })).pipe(
       map(() => true),
       catchError((err) => {
         this.logger.error(err.message);
