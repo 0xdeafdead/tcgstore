@@ -5,6 +5,7 @@ import { ItemRepository } from './item.repository';
 import { PrismaModule } from '../prisma-service/prisma.module';
 
 @Module({
+  imports: [PrismaModule],
   providers: [ItemService, ItemRepository],
   controllers: [ItemController],
   imports:[PrismaModule]
