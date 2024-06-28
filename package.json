@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "serve-app": "npx nx serve base-api",
-    "test": "npx jest --watch",
+    "serve-app": "nx serve base-api",
+    "test": "jest --watch",
+    "test:coverage": "jest --coverage",
     "prisma:generate": "npx prisma generate"
   },
   "private": true,
