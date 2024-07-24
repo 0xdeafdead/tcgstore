@@ -4,6 +4,8 @@
 name: Test CI
 
 on:
+  push:
+    branches: [staging, main]
   pull_request:
     branches: [staging, main]
 
@@ -26,6 +28,7 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
-          projectBaseDir: apps/base-api/src
+          projectBaseDir: .
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
