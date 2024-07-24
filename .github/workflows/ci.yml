@@ -24,7 +24,7 @@ jobs:
       - run: npx nx affected --target=build --parallel=5
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2.2.0
+        uses: SonarSource/sonarcloud-github-action@master
         with:
           projectBaseDir: apps/base-api/src
         env:
