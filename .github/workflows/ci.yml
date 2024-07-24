@@ -26,6 +26,6 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
-          projectBaseDir: apps/base-api/src
+          projectBaseDir: .
         env:
           SONAR_TOKEN: 86e3a4dfc06a925d5a57038f2a2aa0060c038774
