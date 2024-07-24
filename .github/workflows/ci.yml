@@ -8,7 +8,7 @@ on:
     branches: [staging, main]
 
 jobs:
-  run-jest-and-sonar:
+  build-lint-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,10 +20,12 @@ jobs:
           node-version: lts/iron
       - run: npm ci
       - run: npx jest
+      - run: npx nx affected --target=lint --parallel=5
+      - run: npx nx affected --target=build --parallel=5
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.2.0
         with:
-          projectBaseDir: .
+          projectBaseDir: apps/base-api/src
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
