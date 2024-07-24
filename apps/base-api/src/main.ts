@@ -11,18 +11,17 @@ import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const globalPrefix = 'api';
 
+  app.setGlobalPrefix(globalPrefix);
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  const port = process.env.PORT || 3000;
   const config = new DocumentBuilder()
     .setTitle('TCGStore API')
     .setDescription('This is the official TCGStore API')
     .setVersion('0.1')
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  const port = process.env.PORT || 3000;
 
   SwaggerModule.setup('swagger', app, document);
 
