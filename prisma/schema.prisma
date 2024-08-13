@@ -15,9 +15,9 @@ datasource db {
 
 model User {
   id        String    @id @unique
-  email     String    @unique @db.VarChar(30)
-  firstName String    @db.VarChar(20)
-  lastName  String    @db.VarChar(20)
+  email     String    @unique @db.Text
+  firstName String    @db.Text
+  lastName  String    @db.Text
   createdAt DateTime  @default(now()) 
   updatedAt DateTime  @updatedAt 
 }
