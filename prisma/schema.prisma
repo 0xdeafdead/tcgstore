@@ -15,19 +15,15 @@ datasource db {
 
 model User {
   id        String    @id @unique
-  email     String    @unique @db.VarChar(50)
-  username  String    @unique @db.VarChar(50)
-  verified  Boolean   @default(false)
-  rank      Float     @db.DoublePrecision @default(0.00)
-  items     Item[]
+  email     String    @unique @db.VarChar(30)
+  firstName String    @db.VarChar(20)
+  lastName  String    @db.VarChar(20)
+  createdAt DateTime  @default(now()) 
+  updatedAt DateTime  @updatedAt 
 }
 
-model Item {
+model Entity {
   id          String    @id @unique 
-  name        String    @db.VarChar(100)
-  price       Float     @db.DoublePrecision
-  createdAt   DateTime  @default(now()) @db.Timestamp()
-  updatedAt   DateTime  @updatedAt @db.Timestamp()
-  owner       User      @relation(fields: [ownerId], references: [id])
-  ownerId     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
