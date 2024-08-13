@@ -8,7 +8,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { Item } from '@prisma/client';
+import { Entity } from '@prisma/client';
 import { Observable } from 'rxjs';
 import { ItemService } from './item.service';
 import { CreateItemDTO } from './DTOs/createItem.dto';
@@ -23,7 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-@ApiTags('Item')
+@ApiTags('Entity')
 @Controller('item')
 export class ItemController {
   constructor(private readonly service: ItemService) {}
@@ -35,7 +35,7 @@ export class ItemController {
     isArray: true,
   })
   @UseGuards(ControllerGuard(ACCESS_LEVEL.USER))
-  getAllItems(): Observable<Item[]> {
+  getAllItems(): Observable<Entity[]> {
     return this.service.getAllItems();
   }
 
@@ -53,7 +53,7 @@ export class ItemController {
     allowEmptyValue: false,
   })
   @UseGuards(ControllerGuard(ACCESS_LEVEL.USER))
-  getItem(@Param('id') id: string): Observable<Item> {
+  getItem(@Param('id') id: string): Observable<Entity> {
     return this.service.getOneItem(id);
   }
 
@@ -68,7 +68,7 @@ export class ItemController {
     required: true,
   })
   @UseGuards(ControllerGuard(ACCESS_LEVEL.USER))
-  createItem(@Body('input') input: CreateItemDTO): Observable<Item> {
+  createItem(@Body('input') input: CreateItemDTO): Observable<Entity> {
     return this.service.createItem(input);
   }
 
@@ -94,7 +94,7 @@ export class ItemController {
   updateItem(
     @Param('id') id: string,
     @Body('input') input: UpdateItemDTO
-  ): Observable<Item> {
+  ): Observable<Entity> {
     return this.service.updateItem(id, input);
   }
 

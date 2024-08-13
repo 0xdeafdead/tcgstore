@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ItemController } from './item.controller';
 import { ItemService } from './item.service';
-import { Item } from '@prisma/client';
+import { Entity } from '@prisma/client';
 import dayjs from 'dayjs';
 import { of } from 'rxjs';
 import { CreateItemDTO } from './DTOs/createItem.dto';
@@ -12,20 +12,14 @@ describe('ItemController', () => {
   let service: ItemService;
 
   const now = dayjs().toDate();
-  const mockItems: Item[] = [
+  const mockItems: Entity[] = [
     {
       id: 'item_01',
-      name: 'testItem',
-      ownerId: 'user_01',
-      price: 1234.53,
       createdAt: now,
       updatedAt: now,
     },
     {
       id: 'item_02',
-      name: 'testItem2',
-      ownerId: 'user_02',
-      price: 5678.53,
       createdAt: now,
       updatedAt: now,
     },

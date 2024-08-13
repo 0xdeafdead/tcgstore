@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { UserRespository } from './user.repository';
 import {
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -13,20 +14,23 @@ describe('UserService', () => {
   let service: UserService;
   let repostitory: UserRespository;
 
+  const now = new Date();
   const mockUsers: User[] = [
     {
       id: 'user_01',
       email: 'user_01@test.com',
-      rank: 8,
-      username: 'user01',
-      verified: false,
+      createdAt: now,
+      updatedAt: now,
+      firstName: 'testName',
+      lastName: 'testLastName',
     },
     {
       id: 'user_02',
       email: 'user_02@test.com',
-      rank: 7,
-      username: 'user02',
-      verified: true,
+      createdAt: now,
+      updatedAt: now,
+      firstName: 'testName2',
+      lastName: 'testLastName2',
     },
   ];
 
@@ -38,6 +42,7 @@ describe('UserService', () => {
   };
 
   beforeEach(async () => {
+    jest.spyOn(Logger, 'error').mockReturnValue(null);
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
@@ -53,7 +58,7 @@ describe('UserService', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -131,7 +136,8 @@ describe('UserService', () => {
 
   describe('createUser', () => {
     const inputTemplate: CreateUserDTO = {
-      username: 'testName',
+      firstName: 'testName',
+      lastName: 'testLastName',
       email: 'user01@test.com',
     };
     const notRandomUUID = `a-b-c-d-e`;
@@ -148,8 +154,6 @@ describe('UserService', () => {
           expect(mockRepository.create).toHaveBeenCalledWith({
             ...inputTemplate,
             id: notRandomUUID,
-            rank: 0,
-            verified: false,
           });
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
@@ -165,8 +169,6 @@ describe('UserService', () => {
           expect(mockRepository.create).toHaveBeenCalledWith({
             ...inputTemplate,
             id: notRandomUUID,
-            rank: 0,
-            verified: false,
           });
           expect(res).toMatchObject(mockUsers[0]);
           done();

@@ -9,7 +9,7 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { CreateUserDTO } from './DTOs/createUser.dto';
 import { randomUUID } from 'crypto';
 
@@ -44,12 +44,11 @@ export class UserService {
   }
 
   createUser(input: CreateUserDTO): Observable<User> {
-    const newUser: User = {
+    const newUser: Prisma.UserCreateInput = {
       email: input.email,
-      username: input.username,
       id: randomUUID(),
-      rank: 0,
-      verified: false,
+      firstName: input.firstName,
+      lastName: input.lastName,
     };
     return from(this.repository.create(newUser)).pipe(
       catchError((err) => {

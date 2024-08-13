@@ -6,7 +6,8 @@
     "serve-app": "nx serve base-api",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
-    "prisma:generate": "npx prisma generate"
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate dev"
   },
   "private": true,
   "dependencies": {

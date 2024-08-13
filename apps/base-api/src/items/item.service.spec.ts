@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
 import crypto from 'crypto';
-import { Item } from '@prisma/client';
+import { Entity } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -17,20 +18,14 @@ describe('ItemService', () => {
   let itemRepository: ItemRepository;
 
   const now = dayjs().toDate();
-  const mockItems: Item[] = [
+  const mockItems: Entity[] = [
     {
       id: 'item_01',
-      name: 'testItem',
-      ownerId: 'user_01',
-      price: 1234.53,
       createdAt: now,
       updatedAt: now,
     },
     {
       id: 'item_02',
-      name: 'testItem2',
-      ownerId: 'user_02',
-      price: 5678.53,
       createdAt: now,
       updatedAt: now,
     },
@@ -45,6 +40,7 @@ describe('ItemService', () => {
   };
 
   beforeEach(async () => {
+    jest.spyOn(Logger, 'error').mockReturnValue(null);
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ItemService,
@@ -60,7 +56,7 @@ describe('ItemService', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
