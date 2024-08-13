@@ -9,20 +9,23 @@ describe('UserController', () => {
   let controller: UserController;
   let service: UserService;
 
+  const now = new Date();
   const mockUsers: User[] = [
     {
       id: 'user_01',
       email: 'user_01@test.com',
-      rank: 8,
-      username: 'user01',
-      verified: false,
+      createdAt: now,
+      updatedAt: now,
+      firstName: 'testName',
+      lastName: 'testLastName',
     },
     {
       id: 'user_02',
       email: 'user_02@test.com',
-      rank: 7,
-      username: 'user02',
-      verified: true,
+      createdAt: now,
+      updatedAt: now,
+      firstName: 'testName2',
+      lastName: 'testLastName2',
     },
   ];
 
@@ -84,7 +87,8 @@ describe('UserController', () => {
   describe('createUser', () => {
     const input: CreateUserDTO = {
       email: 'user01@test.com',
-      username: 'user01',
+      firstName: 'testName',
+      lastName: 'testLastName',
     };
     it('should return the user created', (done) => {
       serviceMock.createUser.mockReturnValueOnce(of(mockUsers[0]));

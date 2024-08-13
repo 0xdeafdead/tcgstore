@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Item } from '@prisma/client';
+import { Entity } from '@prisma/client';
 import {
   catchError,
   from,
@@ -19,7 +19,7 @@ export class ItemService {
   private readonly logger = new Logger('ItemService');
   constructor(private readonly repository: ItemRepository) {}
 
-  getAllItems(): Observable<Item[]> {
+  getAllItems(): Observable<Entity[]> {
     return from(this.repository.all()).pipe(
       catchError((err) => {
         this.logger.error(err.message);
@@ -28,7 +28,7 @@ export class ItemService {
     );
   }
 
-  getOneItem(id: string): Observable<Item> {
+  getOneItem(id: string): Observable<Entity> {
     return from(this.repository.getOne({ where: { id } })).pipe(
       switchMap((user) => {
         if (!user) {
@@ -44,7 +44,7 @@ export class ItemService {
     );
   }
 
-  createItem(input: CreateItemDTO): Observable<Item> {
+  createItem(input: CreateItemDTO): Observable<Entity> {
     const newInput: CreateInput = { ...input, id: randomUUID() };
     return from(this.repository.create(newInput)).pipe(
       catchError((err) => {
@@ -54,7 +54,7 @@ export class ItemService {
     );
   }
 
-  updateItem(id: string, input: UpdateItemDTO): Observable<Item> {
+  updateItem(id: string, input: UpdateItemDTO): Observable<Entity> {
     return from(this.repository.update({ data: input, where: { id } }));
   }
 
