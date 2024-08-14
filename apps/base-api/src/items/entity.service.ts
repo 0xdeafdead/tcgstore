@@ -1,5 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Entity } from '@prisma/client';
+import { Entity, Prisma } from '@prisma/client';
 import {
   catchError,
   from,
@@ -9,17 +8,17 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import { CreateInput, ItemRepository } from './item.repository';
-import { CreateItemDTO } from './DTOs/createItem.dto';
-import { randomUUID } from 'crypto';
-import { UpdateItemDTO } from './DTOs/updateItem.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+
+import { EntityRepository } from './entity.repository';
 
 @Injectable()
-export class ItemService {
-  private readonly logger = new Logger('ItemService');
-  constructor(private readonly repository: ItemRepository) {}
+export class EntityService {
+  private readonly logger = new Logger('EntityService');
+  constructor(private readonly repository: EntityRepository) {}
 
-  getAllItems(): Observable<Entity[]> {
+  getAllEntities(): Observable<Entity[]> {
     return from(this.repository.all()).pipe(
       catchError((err) => {
         this.logger.error(err.message);
@@ -28,13 +27,13 @@ export class ItemService {
     );
   }
 
-  getOneItem(id: string): Observable<Entity> {
+  getOneEntity(id: string): Observable<Entity> {
     return from(this.repository.getOne({ where: { id } })).pipe(
-      switchMap((user) => {
-        if (!user) {
+      switchMap((entity) => {
+        if (!entity) {
           throw new NotFoundException('Could not find item with specified id');
         } else {
-          return of(user);
+          return of(entity);
         }
       }),
       catchError((err) => {
@@ -44,9 +43,11 @@ export class ItemService {
     );
   }
 
-  createItem(input: CreateItemDTO): Observable<Entity> {
-    const newInput: CreateInput = { ...input, id: randomUUID() };
-    return from(this.repository.create(newInput)).pipe(
+  createEntity(): Observable<Entity> {
+    const input: Prisma.EntityCreateInput = {
+      id: uuidv4(),
+    };
+    return from(this.repository.create(input)).pipe(
       catchError((err) => {
         this.logger.error(err.message);
         return throwError(() => err);
@@ -54,11 +55,14 @@ export class ItemService {
     );
   }
 
-  updateItem(id: string, input: UpdateItemDTO): Observable<Entity> {
+  updateEntity(id: string): Observable<Entity> {
+    const input: Prisma.EntityUpdateInput = {
+      //This is intentional
+    };
     return from(this.repository.update({ data: input, where: { id } }));
   }
 
-  deleteItem(id: string): Observable<boolean> {
+  deleteEntity(id: string): Observable<boolean> {
     return from(this.repository.delete({ where: { id } })).pipe(
       map(() => true),
       catchError((err) => {

@@ -1,0 +1,411 @@
+{
+  "version": "6.0",
+  "nxVersion": "19.5.7",
+  "deps": {
+    "@nestjs/common": "^10.0.2",
+    "@nestjs/core": "^10.0.2",
+    "@nestjs/platform-express": "^10.0.2",
+    "@nestjs/swagger": "^7.3.1",
+    "@prisma/client": "^5.13.0",
+    "@types/uuid": "^10.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "date-fns": "^3.6.0",
+    "helmet": "^7.1.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0",
+    "uuid": "^10.0.0",
+    "@nestjs/schematics": "^10.0.1",
+    "@nestjs/testing": "^10.0.2",
+    "@nx/eslint": "19.5.7",
+    "@nx/eslint-plugin": "19.5.7",
+    "@nx/jest": "19.5.7",
+    "@nx/js": "19.5.7",
+    "@nx/nest": "19.5.7",
+    "@nx/node": "19.5.7",
+    "@nx/web": "19.5.7",
+    "@nx/webpack": "19.5.7",
+    "@nx/workspace": "19.5.7",
+    "@swc-node/register": "1.9.2",
+    "@swc/core": "1.5.7",
+    "@swc/helpers": "0.5.12",
+    "@types/jest": "^29.4.0",
+    "@types/node": "~18.16.9",
+    "@typescript-eslint/eslint-plugin": "7.18.0",
+    "@typescript-eslint/parser": "7.18.0",
+    "eslint": "~8.57.0",
+    "eslint-config-prettier": "^9.0.0",
+    "jest": "^29.4.1",
+    "jest-environment-node": "^29.4.1",
+    "nx": "19.5.7",
+    "prettier": "^2.6.2",
+    "prisma": "^5.13.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "5.5.4",
+    "webpack-cli": "^5.1.4"
+  },
+  "pathMappings": {},
+  "nxJsonPlugins": [
+    {
+      "name": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview"
+      }
+    },
+    {
+      "name": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "name": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    }
+  ],
+  "fileMap": {
+    "nonProjectFiles": [
+      {
+        "file": "README.md",
+        "hash": "1356435342549138206"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "16448050467312557263"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": "sonar-project.properties",
+        "hash": "4943436529356282932"
+      },
+      {
+        "file": "migrations.json",
+        "hash": "13095237272253993584"
+      },
+      {
+        "file": ".eslintignore",
+        "hash": "7663861978715868291"
+      },
+      {
+        "file": ".eslintrc.json",
+        "hash": "15629280613521941793"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "6961120116957332862"
+      },
+      {
+        "file": "prisma/migrations/20240810070522_innit/migration.sql",
+        "hash": "7738627775918878998"
+      },
+      {
+        "file": "prisma/migrations/migration_lock.toml",
+        "hash": "11493296588214560035"
+      },
+      {
+        "file": "prisma/schema.prisma",
+        "hash": "1149142017761711268"
+      },
+      {
+        "file": ".github/workflows/ci.yml",
+        "hash": "643806593610445145"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "8981624558870133476"
+      },
+      {
+        "file": "nx.json",
+        "hash": "12187648354665091478"
+      },
+      {
+        "file": "package.json",
+        "hash": "3584978470551134273"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": ".vscode/extensions.json",
+        "hash": "4934098906304722861"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "6595872759808463814"
+      },
+      {
+        "file": "prisma/migrations/20240813031002_change_to_text/migration.sql",
+        "hash": "18333581168876924347"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "3494843969422251966"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "16936441711144470533"
+      }
+    ],
+    "projectFileMap": {
+      "base-api": [
+        {
+          "file": "apps/base-api/.dockerignore",
+          "hash": "12150612134521107550"
+        },
+        {
+          "file": "apps/base-api/.eslintrc.json",
+          "hash": "13800677001662881425"
+        },
+        {
+          "file": "apps/base-api/Dockerfile",
+          "hash": "18225147678986595160"
+        },
+        {
+          "file": "apps/base-api/jest.config.ts",
+          "hash": "4006779565826322206"
+        },
+        {
+          "file": "apps/base-api/project.json",
+          "hash": "3207991328008235713"
+        },
+        {
+          "file": "apps/base-api/src/app.controller.spec.ts",
+          "hash": "9499997688052526633",
+          "deps": [
+            "npm:@nestjs/testing"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/app.controller.ts",
+          "hash": "9005150069945785676",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/app.module.ts",
+          "hash": "12603467501893160737",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/app.service.spec.ts",
+          "hash": "8587461140686713758",
+          "deps": [
+            "npm:@nestjs/testing"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/app.service.ts",
+          "hash": "9967902337593410053",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/base-api/src/guards/controller.guard.ts",
+          "hash": "1062905567111485410",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/items/DTOs/updateItem.dto.ts",
+          "hash": "7575281569643279306",
+          "deps": [
+            "npm:@nestjs/swagger",
+            "npm:class-validator"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/items/entity.controller.spec.ts",
+          "hash": "13950042562294061063",
+          "deps": [
+            "npm:@nestjs/testing",
+            "npm:@prisma/client",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/items/entity.controller.ts",
+          "hash": "5407155635453209090",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@prisma/client",
+            "npm:rxjs",
+            "npm:@nestjs/swagger"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/items/entity.module.ts",
+          "hash": "13188465339092796026",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/items/entity.repository.ts",
+          "hash": "15626934268690405169",
+          "deps": [
+            "npm:@prisma/client",
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/items/entity.service.spec.ts",
+          "hash": "11470272891147061358",
+          "deps": [
+            "npm:uuid",
+            "npm:@prisma/client",
+            "npm:@nestjs/testing",
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/items/entity.service.ts",
+          "hash": "8004449589614347033",
+          "deps": [
+            "npm:@prisma/client",
+            "npm:rxjs",
+            "npm:uuid",
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/main.ts",
+          "hash": "3222166168642768632",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@nestjs/core",
+            "npm:@nestjs/swagger",
+            "npm:helmet"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/prisma-service/prisma.module.ts",
+          "hash": "13664270134234357662",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/prisma-service/prisma.service.spec.ts",
+          "hash": "1969171863458194817",
+          "deps": [
+            "npm:@nestjs/testing"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/prisma-service/prisma.service.ts",
+          "hash": "17261721385087200414",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/types/shared.ts",
+          "hash": "12846788026004137118"
+        },
+        {
+          "file": "apps/base-api/src/user/DTOs/createUser.dto.ts",
+          "hash": "3688787704027640217",
+          "deps": [
+            "npm:@nestjs/swagger",
+            "npm:class-validator"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/user/user.controller.spec.ts",
+          "hash": "1925373968347428340",
+          "deps": [
+            "npm:@nestjs/testing",
+            "npm:@prisma/client",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/user/user.controller.ts",
+          "hash": "8351335078399053607",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:rxjs",
+            "npm:@prisma/client",
+            "npm:@nestjs/swagger"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/user/user.module.ts",
+          "hash": "5677311425038588139",
+          "deps": [
+            "npm:@nestjs/common"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/user/user.repository.ts",
+          "hash": "2383553575074972009",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/user/user.service.spec.ts",
+          "hash": "451527325851728636",
+          "deps": [
+            "npm:@nestjs/testing",
+            "npm:@nestjs/common",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/base-api/src/user/user.service.ts",
+          "hash": "11008600409396171728",
+          "deps": [
+            "npm:@nestjs/common",
+            "npm:rxjs",
+            "npm:@prisma/client"
+          ]
+        },
+        {
+          "file": "apps/base-api/tsconfig.app.json",
+          "hash": "3171572500325445971"
+        },
+        {
+          "file": "apps/base-api/tsconfig.json",
+          "hash": "9997756521973421429"
+        },
+        {
+          "file": "apps/base-api/tsconfig.spec.json",
+          "hash": "11550347367511341917"
+        },
+        {
+          "file": "apps/base-api/webpack.config.js",
+          "hash": "459245865732701538",
+          "deps": [
+            "npm:@nx/webpack"
+          ]
+        }
+      ]
+    }
+  }
+}

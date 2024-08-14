@@ -1,20 +1,16 @@
 import { Entity, Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma-service/prisma.service';
-import { CreateItemDTO } from './DTOs/createItem.dto';
 
-export interface CreateInput extends CreateItemDTO {
-  id: string;
-}
 @Injectable()
-export class ItemRepository {
+export class EntityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async all(): Promise<Entity[]> {
     return this.prisma.entity.findMany();
   }
 
-  async create(input: Prisma.EntityUncheckedCreateInput): Promise<Entity> {
+  async create(input: Prisma.EntityCreateInput): Promise<Entity> {
     return this.prisma.entity.create({
       data: input,
     });

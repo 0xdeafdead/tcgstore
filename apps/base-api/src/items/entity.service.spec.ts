@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
 import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 import { Entity } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
@@ -8,24 +8,27 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { ItemService } from './item.service';
-import { ItemRepository } from './item.repository';
-import { CreateItemDTO } from './DTOs/createItem.dto';
-import { UpdateItemDTO } from './DTOs/updateItem.dto';
+import { EntityService } from './entity.service';
+import { EntityRepository } from './entity.repository';
 
-describe('ItemService', () => {
-  let service: ItemService;
-  let itemRepository: ItemRepository;
+const fakeUUUID = 'abcd1234-abcd-1234-defg-56789-56789defg';
+jest.mock('uuid', () => {
+  return { v4: () => fakeUUUID };
+});
 
-  const now = dayjs().toDate();
-  const mockItems: Entity[] = [
+describe('EntityService', () => {
+  let service: EntityService;
+  let entityRepository: EntityRepository;
+
+  const now = new Date();
+  const mockEntities: Entity[] = [
     {
-      id: 'item_01',
+      id: 'entity_01',
       createdAt: now,
       updatedAt: now,
     },
     {
-      id: 'item_02',
+      id: 'entity_02',
       createdAt: now,
       updatedAt: now,
     },
@@ -43,16 +46,16 @@ describe('ItemService', () => {
     jest.spyOn(Logger, 'error').mockReturnValue(null);
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ItemService,
+        EntityService,
         {
-          provide: ItemRepository,
+          provide: EntityRepository,
           useValue: mockRepository,
         },
       ],
     }).compile();
 
-    service = module.get<ItemService>(ItemService);
-    itemRepository = module.get<ItemRepository>(ItemRepository);
+    service = module.get<EntityService>(EntityService);
+    entityRepository = module.get<EntityRepository>(EntityRepository);
   });
 
   afterEach(() => {
@@ -61,16 +64,16 @@ describe('ItemService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-    expect(itemRepository).toBeDefined();
+    expect(entityRepository).toBeDefined();
   });
 
-  describe('getAllItems', () => {
+  describe('getAllEntities', () => {
     it('should return a InternalServerException when fail', (done) => {
       const testError = new InternalServerErrorException(
-        'Could not create item'
+        'Could not create entity'
       );
       mockRepository.all.mockRejectedValueOnce(testError);
-      service.getAllItems().subscribe({
+      service.getAllEntities().subscribe({
         error: (err) => {
           expect(mockRepository.all).toHaveBeenCalledTimes(1);
           expect(err).toMatchObject(testError);
@@ -79,9 +82,9 @@ describe('ItemService', () => {
       });
     });
 
-    it('should return an array of items', (done) => {
-      mockRepository.all.mockResolvedValueOnce(mockItems);
-      service.getAllItems().subscribe({
+    it('should return an array of entities', (done) => {
+      mockRepository.all.mockResolvedValueOnce(mockEntities);
+      service.getAllEntities().subscribe({
         next: (res) => {
           expect(mockRepository.all).toHaveBeenCalledTimes(1);
           expect(Array.isArray(res)).toBeTruthy();
@@ -93,13 +96,13 @@ describe('ItemService', () => {
   });
 
   describe('getOne', () => {
-    const id = 'item_00';
+    const id = 'entity_00';
     it('should return an InternalServerException if repository fails ', (done) => {
       const testError = new InternalServerErrorException(
-        'Could not retrieve item'
+        'Could not retrieve entity'
       );
       mockRepository.getOne.mockRejectedValueOnce(testError);
-      service.getOneItem(id).subscribe({
+      service.getOneEntity(id).subscribe({
         error: (err) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
           expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
@@ -111,7 +114,7 @@ describe('ItemService', () => {
 
     it('should return an NotFoundException if repository fails ', (done) => {
       mockRepository.getOne.mockResolvedValueOnce(null);
-      service.getOneItem(id).subscribe({
+      service.getOneEntity(id).subscribe({
         error: (err) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
           expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
@@ -121,39 +124,28 @@ describe('ItemService', () => {
       });
     });
 
-    it('should return an item', (done) => {
-      mockRepository.getOne.mockResolvedValueOnce(mockItems[0]);
-      service.getOneItem(id).subscribe({
+    it('should return an entity', (done) => {
+      mockRepository.getOne.mockResolvedValueOnce(mockEntities[0]);
+      service.getOneEntity(id).subscribe({
         next: (res) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
           expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
-          expect(res).toMatchObject(mockItems[0]);
+          expect(res).toMatchObject(mockEntities[0]);
           done();
         },
       });
     });
   });
 
-  describe('createItem', () => {
-    const inputTemplate: CreateItemDTO = {
-      name: 'testName',
-      ownerId: 'user_01',
-      price: 1234.56,
-    };
-    const notRandomUUID = `a-b-c-d-e`;
-    beforeEach(() => {
-      jest.spyOn(crypto, 'randomUUID').mockReturnValue(notRandomUUID);
-    });
-
+  describe('createEntity', () => {
     it('should return an InternalServerException if repository fails', (done) => {
       const testError = new InternalServerErrorException();
       mockRepository.create.mockRejectedValueOnce(testError);
-      service.createItem(inputTemplate).subscribe({
+      service.createEntity().subscribe({
         error: (err) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
           expect(mockRepository.create).toHaveBeenCalledWith({
-            ...inputTemplate,
-            id: notRandomUUID,
+            id: fakeUUUID,
           });
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
@@ -161,37 +153,32 @@ describe('ItemService', () => {
       });
     });
 
-    it('should return an item ', (done) => {
-      mockRepository.create.mockResolvedValueOnce(mockItems[0]);
-      service.createItem(inputTemplate).subscribe({
+    it('should return an entity ', (done) => {
+      mockRepository.create.mockResolvedValueOnce(mockEntities[0]);
+      service.createEntity().subscribe({
         next: (res) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
           expect(mockRepository.create).toHaveBeenCalledWith({
-            ...inputTemplate,
-            id: notRandomUUID,
+            id: fakeUUUID,
           });
-          expect(res).toMatchObject(mockItems[0]);
+          expect(res).toMatchObject(mockEntities[0]);
           done();
         },
       });
     });
   });
 
-  describe('updateItem', () => {
-    const id = 'item_01';
-    const inputTemplate: UpdateItemDTO = {
-      name: 'newItemName',
-      price: 999.99,
-    };
+  describe('updateEntity', () => {
+    const id = 'entity_01';
     it('should return an error when updating fail', (done) => {
       mockRepository.update.mockRejectedValueOnce(
         new Error('Failed to update')
       );
-      service.updateItem(id, inputTemplate).subscribe({
+      service.updateEntity(id).subscribe({
         error: (err) => {
           expect(mockRepository.update).toHaveBeenCalledTimes(1);
           expect(mockRepository.update).toHaveBeenCalledWith({
-            data: inputTemplate,
+            data: {},
             where: { id },
           });
           expect(err).toBeInstanceOf(Error);
@@ -201,13 +188,13 @@ describe('ItemService', () => {
     });
   });
 
-  describe('deleteItem', () => {
-    const id = 'item_01';
+  describe('deleteEntity', () => {
+    const id = 'entity_01';
     it('should return an error when deletion fails', (done) => {
       mockRepository.delete.mockRejectedValueOnce(
         new InternalServerErrorException()
       );
-      service.deleteItem(id).subscribe({
+      service.deleteEntity(id).subscribe({
         error: (err) => {
           expect(mockRepository.delete).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);
@@ -217,8 +204,8 @@ describe('ItemService', () => {
     });
 
     it('should return an error when deletion fails', (done) => {
-      mockRepository.delete.mockResolvedValueOnce(mockItems[0]);
-      service.deleteItem(id).subscribe({
+      mockRepository.delete.mockResolvedValueOnce(mockEntities[0]);
+      service.deleteEntity(id).subscribe({
         next: (res) => {
           expect(mockRepository.delete).toHaveBeenCalledTimes(1);
           expect(res).toBeTruthy();
