@@ -2974,6 +2974,15 @@
         "hash": "sha512-scHWahbHF0eyj3JsxG9CFJgFdFNaVQCNAimBlT6PzS3n/HptxqREjsm4OH6AN3lYcffZYSPxXW8ua2BEHp0lJQ=="
       }
     },
+    "npm:@swc/types": {
+      "type": "npm",
+      "name": "npm:@swc/types",
+      "data": {
+        "version": "0.1.12",
+        "packageName": "@swc/types",
+        "hash": "sha512-wBJA+SdtkbFhHjTMYH+dEH1y4VpfGdAc2Kw/LK09i9bXd/K6j6PkDcFCEzb6iVfZMkPRrl/q0e3toqTAJdkIVA=="
+      }
+    },
     "npm:@swc/counter": {
       "type": "npm",
       "name": "npm:@swc/counter",
@@ -15054,6 +15063,11 @@
         "source": "npm:@swc-node/core",
         "target": "npm:@swc/core",
         "type": "static"
+      },
+      {
+        "source": "npm:@swc-node/core",
+        "target": "npm:@swc/types",
+        "type": "static"
       }
     ],
     "npm:@swc-node/register": [
@@ -15200,6 +15214,13 @@
       {
         "source": "npm:@swc/helpers",
         "target": "npm:tslib",
+        "type": "static"
+      }
+    ],
+    "npm:@swc/types": [
+      {
+        "source": "npm:@swc/types",
+        "target": "npm:@swc/counter",
         "type": "static"
       }
     ],

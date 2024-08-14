@@ -237,3 +237,88 @@
 [NX Daemon Server] - 2024-08-14T03:27:12.070Z - Closed a connection. Number of open connections: 5
 [NX Daemon Server] - 2024-08-14T03:27:40.173Z - [WATCHER]: Processing file changes in outputs
 [NX Daemon Server] - 2024-08-14T03:27:40.232Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-08-14T03:30:49.862Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-08-14T03:30:49.863Z - [WATCHER]: Stopping the watcher for /home/deafdead/projects/tcg-market-ca/tcg-market-core (sources)
+[NX Daemon Server] - 2024-08-14T03:30:49.863Z - [WATCHER]: Stopping the watcher for /home/deafdead/projects/tcg-market-ca/tcg-market-core (outputs)
+[NX Daemon Server] - 2024-08-14T03:30:49.863Z - Server stopped because: "LOCK_FILES_CHANGED"
+[NX Daemon Server] - 2024-08-14T03:30:50.109Z - Started listening on: /tmp/24cda4de25f1249fe705/d.sock
+[NX Daemon Server] - 2024-08-14T03:30:50.112Z - [WATCHER]: Subscribed to changes within: /home/deafdead/projects/tcg-market-ca/tcg-market-core (native)
+[NX Daemon Server] - 2024-08-14T03:30:50.114Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-14T03:30:50.115Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:30:50.117Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-14T03:30:50.118Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-08-14T03:30:50.414Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-08-14T03:30:50.414Z - [REQUEST]: 
+[NX Daemon Server] - 2024-08-14T03:30:50.414Z - [REQUEST]: 
+[NX Daemon Server] - 2024-08-14T03:30:50.431Z - Time taken for 'loadNxPlugins' 294.02864ms
+[NX Daemon Server] - 2024-08-14T03:30:50.431Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:30:50.432Z - Established a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:30:50.432Z - Closed a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:30:50.433Z - Established a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:30:50.435Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.435Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.436Z - Handled HASH_GLOB. Handling time: 1. Response time: 1.
+[NX Daemon Server] - 2024-08-14T03:30:50.436Z - Established a connection. Number of open connections: 4
+[NX Daemon Server] - 2024-08-14T03:30:50.436Z - Closed a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:30:50.438Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.438Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.438Z - Handled HASH_GLOB. Handling time: 1. Response time: 0.
+[NX Daemon Server] - 2024-08-14T03:30:50.585Z - Established a connection. Number of open connections: 4
+[NX Daemon Server] - 2024-08-14T03:30:50.586Z - Closed a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:30:50.586Z - Established a connection. Number of open connections: 4
+[NX Daemon Server] - 2024-08-14T03:30:50.588Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.588Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.588Z - Handled HASH_GLOB. Handling time: 1. Response time: 0.
+[NX Daemon Server] - 2024-08-14T03:30:50.590Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.590Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.590Z - Handled HASH_GLOB. Handling time: 1. Response time: 0.
+[NX Daemon Server] - 2024-08-14T03:30:50.592Z - [REQUEST]: Responding to the client. handleGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.592Z - Done responding to the client handleGlob
+[NX Daemon Server] - 2024-08-14T03:30:50.592Z - Handled GLOB. Handling time: 1. Response time: 0.
+[NX Daemon Server] - 2024-08-14T03:30:51.447Z - Time taken for 'build-project-configs' 1016.1454839999999ms
+[NX Daemon Server] - 2024-08-14T03:30:51.511Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-08-14T03:30:51.512Z - Time taken for 'total for creating and serializing project graph' 1392.705363ms
+[NX Daemon Server] - 2024-08-14T03:30:51.512Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-08-14T03:30:51.512Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1393. Response time: 1.
+[NX Daemon Server] - 2024-08-14T03:30:51.516Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-08-14T03:30:51.516Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-08-14T03:30:51.517Z - Time taken for 'total for creating and serializing project graph' 0.2319999999999709ms
+[NX Daemon Server] - 2024-08-14T03:30:51.517Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-08-14T03:30:51.517Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 1.
+[NX Daemon Server] - 2024-08-14T03:30:51.520Z - Established a connection. Number of open connections: 5
+[NX Daemon Server] - 2024-08-14T03:31:18.226Z - Started listening on: /tmp/24cda4de25f1249fe705/d.sock
+[NX Daemon Server] - 2024-08-14T03:31:18.228Z - [WATCHER]: Subscribed to changes within: /home/deafdead/projects/tcg-market-ca/tcg-market-core (native)
+[NX Daemon Server] - 2024-08-14T03:31:18.230Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-14T03:31:18.231Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:31:18.235Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-14T03:31:18.238Z - [REQUEST]: Responding to the client. handleGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.239Z - Done responding to the client handleGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.239Z - Handled GLOB. Handling time: 2. Response time: 1.
+[NX Daemon Server] - 2024-08-14T03:31:18.249Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:31:18.250Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-14T03:31:18.250Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:31:18.252Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.253Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.253Z - Handled HASH_GLOB. Handling time: 0. Response time: 1.
+[NX Daemon Server] - 2024-08-14T03:31:18.255Z - Established a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:31:18.255Z - Closed a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:31:18.256Z - Established a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:31:18.260Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.260Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.260Z - Handled HASH_GLOB. Handling time: 2. Response time: 0.
+[NX Daemon Server] - 2024-08-14T03:31:18.443Z - Established a connection. Number of open connections: 4
+[NX Daemon Server] - 2024-08-14T03:31:18.444Z - Closed a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:31:18.445Z - Established a connection. Number of open connections: 4
+[NX Daemon Server] - 2024-08-14T03:31:18.447Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.447Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.447Z - Handled HASH_GLOB. Handling time: 1. Response time: 0.
+[NX Daemon Server] - 2024-08-14T03:31:18.451Z - [REQUEST]: Responding to the client. handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.452Z - Done responding to the client handleHashGlob
+[NX Daemon Server] - 2024-08-14T03:31:18.452Z - Handled HASH_GLOB. Handling time: 3. Response time: 1.
+[NX Daemon Server] - 2024-08-14T03:31:18.459Z - [REQUEST]: Responding to the client. handleNxWorkspaceFiles
+[NX Daemon Server] - 2024-08-14T03:31:18.459Z - Done responding to the client handleNxWorkspaceFiles
+[NX Daemon Server] - 2024-08-14T03:31:18.459Z - Handled GET_NX_WORKSPACE_FILES. Handling time: 1. Response time: 1.
+[NX Daemon Server] - 2024-08-14T03:31:18.514Z - Closed a connection. Number of open connections: 3
+[NX Daemon Server] - 2024-08-14T03:31:18.518Z - Closed a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-08-14T03:31:18.521Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-08-14T03:31:18.532Z - Closed a connection. Number of open connections: 0

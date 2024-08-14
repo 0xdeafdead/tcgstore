@@ -70,96 +70,6 @@
     }
   ],
   "fileMap": {
-    "nonProjectFiles": [
-      {
-        "file": "README.md",
-        "hash": "1356435342549138206"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "16448050467312557263"
-      },
-      {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": "sonar-project.properties",
-        "hash": "4943436529356282932"
-      },
-      {
-        "file": "migrations.json",
-        "hash": "13095237272253993584"
-      },
-      {
-        "file": ".eslintignore",
-        "hash": "7663861978715868291"
-      },
-      {
-        "file": ".eslintrc.json",
-        "hash": "15629280613521941793"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
-      },
-      {
-        "file": "docker-compose.yml",
-        "hash": "6961120116957332862"
-      },
-      {
-        "file": "prisma/migrations/20240810070522_innit/migration.sql",
-        "hash": "7738627775918878998"
-      },
-      {
-        "file": "prisma/migrations/migration_lock.toml",
-        "hash": "11493296588214560035"
-      },
-      {
-        "file": "prisma/schema.prisma",
-        "hash": "1149142017761711268"
-      },
-      {
-        "file": ".github/workflows/ci.yml",
-        "hash": "643806593610445145"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "8981624558870133476"
-      },
-      {
-        "file": "nx.json",
-        "hash": "12187648354665091478"
-      },
-      {
-        "file": "package.json",
-        "hash": "3584978470551134273"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": ".vscode/extensions.json",
-        "hash": "4934098906304722861"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "6595872759808463814"
-      },
-      {
-        "file": "prisma/migrations/20240813031002_change_to_text/migration.sql",
-        "hash": "18333581168876924347"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "3494843969422251966"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "16936441711144470533"
-      }
-    ],
     "projectFileMap": {
       "base-api": [
         {
@@ -406,6 +316,96 @@
           ]
         }
       ]
-    }
+    },
+    "nonProjectFiles": [
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": ".eslintignore",
+        "hash": "7663861978715868291"
+      },
+      {
+        "file": ".eslintrc.json",
+        "hash": "15629280613521941793"
+      },
+      {
+        "file": ".github/workflows/ci.yml",
+        "hash": "643806593610445145"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "6595872759808463814"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "16448050467312557263"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
+      },
+      {
+        "file": ".vscode/extensions.json",
+        "hash": "4934098906304722861"
+      },
+      {
+        "file": "README.md",
+        "hash": "1356435342549138206"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "6961120116957332862"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "3494843969422251966"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": "migrations.json",
+        "hash": "13095237272253993584"
+      },
+      {
+        "file": "nx.json",
+        "hash": "12187648354665091478"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "4973667189246249930"
+      },
+      {
+        "file": "package.json",
+        "hash": "3584978470551134273"
+      },
+      {
+        "file": "prisma/migrations/20240810070522_innit/migration.sql",
+        "hash": "7738627775918878998"
+      },
+      {
+        "file": "prisma/migrations/20240813031002_change_to_text/migration.sql",
+        "hash": "18333581168876924347"
+      },
+      {
+        "file": "prisma/migrations/migration_lock.toml",
+        "hash": "11493296588214560035"
+      },
+      {
+        "file": "prisma/schema.prisma",
+        "hash": "1149142017761711268"
+      },
+      {
+        "file": "sonar-project.properties",
+        "hash": "4943436529356282932"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "16936441711144470533"
+      }
+    ]
   }
 }
