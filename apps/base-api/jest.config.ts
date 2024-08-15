@@ -8,5 +8,8 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/base-api',
-  coveragePathIgnorePatterns: ['<rootDir>/src/guards'],
+  coveragePathIgnorePatterns: [
+    '<rootDir>/src/guards',
+    '<rootDir>/src/.*.repository.*',
+  ],
 };
