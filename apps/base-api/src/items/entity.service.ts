@@ -31,7 +31,9 @@ export class EntityService {
     return from(this.repository.getOne({ where: { id } })).pipe(
       switchMap((entity) => {
         if (!entity) {
-          throw new NotFoundException('Could not find item with specified id');
+          throw new NotFoundException(
+            'Could not find entity with specified id'
+          );
         } else {
           return of(entity);
         }

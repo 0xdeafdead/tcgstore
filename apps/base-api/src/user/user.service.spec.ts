@@ -8,7 +8,11 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { CreateUserDTO } from './DTOs/createUser.dto';
-import crypto from 'crypto';
+
+const fakeUUUID = 'abcd1234-abcd-1234-defg-56789-56789defg';
+jest.mock('uuid', () => {
+  return { v4: () => fakeUUUID };
+});
 
 describe('UserService', () => {
   let service: UserService;
@@ -140,10 +144,6 @@ describe('UserService', () => {
       lastName: 'testLastName',
       email: 'user01@test.com',
     };
-    const notRandomUUID = `a-b-c-d-e`;
-    beforeEach(() => {
-      jest.spyOn(crypto, 'randomUUID').mockReturnValue(notRandomUUID);
-    });
 
     it('should return an InternalServerException if repository fails', (done) => {
       const testError = new InternalServerErrorException();
@@ -153,7 +153,7 @@ describe('UserService', () => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
           expect(mockRepository.create).toHaveBeenCalledWith({
             ...inputTemplate,
-            id: notRandomUUID,
+            id: fakeUUUID,
           });
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
@@ -168,7 +168,7 @@ describe('UserService', () => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
           expect(mockRepository.create).toHaveBeenCalledWith({
             ...inputTemplate,
-            id: notRandomUUID,
+            id: fakeUUUID,
           });
           expect(res).toMatchObject(mockUsers[0]);
           done();
