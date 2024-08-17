@@ -19,22 +19,6 @@
           "buildTarget": "base-api:build:production"
         }
       }
-    },
-    "test:cov": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "apps/base-api/jest.config.ts",
-        "coverageDirectory": "coverage/apps/base-api",
-        "codeCoverage": true
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "base-api:test:cov"
-        },
-        "production": {
-          "buildTarget": "base-api:test:cov"
-        }
-      }
     }
   }
 }
