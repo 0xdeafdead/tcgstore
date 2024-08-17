@@ -61,7 +61,12 @@ export class EntityService {
     const input: Prisma.EntityUpdateInput = {
       //This is intentional
     };
-    return from(this.repository.update({ data: input, where: { id } }));
+    return from(this.repository.update({ data: input, where: { id } })).pipe(
+      catchError((err) => {
+        this.logger.error(err.message);
+        return throwError(() => err);
+      })
+    );
   }
 
   deleteEntity(id: string): Observable<boolean> {
