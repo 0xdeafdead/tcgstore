@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -13,6 +14,7 @@ import { EntityService } from './entity.service';
 import { ControllerGuard } from '../guards/controller.guard';
 import { ACCESS_LEVEL } from '../types/shared';
 import {
+  ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,

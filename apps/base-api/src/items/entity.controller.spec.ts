@@ -51,7 +51,7 @@ describe('EntityController', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getAllEntities', () => {
+  describe('getAllUsers', () => {
     it('should return an array of entities', (done) => {
       mockService.getAllEntities.mockReturnValueOnce(of(mockEntities));
       controller.getAllEntities().subscribe({
@@ -64,7 +64,7 @@ describe('EntityController', () => {
     });
   });
 
-  describe('getEntity', () => {
+  describe('getOne', () => {
     const id = 'entity_00';
     it('should return an entity', (done) => {
       mockService.getOneEntity.mockReturnValueOnce(of(mockEntities[0]));

@@ -9,4 +9,4 @@ import { PrismaModule } from '../prisma-service/prisma.module';
   providers: [EntityService, EntityRepository],
   controllers: [EntityController],
 })
-export class EntityModule {}
+export class ItemModule {}
