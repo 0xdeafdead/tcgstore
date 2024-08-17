@@ -3,6 +3,8 @@ export default {
   displayName: 'base-api',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
+  reportPath: 'coverage',
+  reportFile: 'test-report.xml',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
