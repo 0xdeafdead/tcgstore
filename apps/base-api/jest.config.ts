@@ -10,8 +10,10 @@ export default {
   collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.[tj]s'],
   coverageDirectory: '../../coverage/apps/base-api',
+  coverageReporters: ['lcov'],
   coveragePathIgnorePatterns: [
     '<rootDir>/src/guards',
     '<rootDir>/src/.*.repository.*',
+    '<rootDir>/node_modules/',
   ],
 };
