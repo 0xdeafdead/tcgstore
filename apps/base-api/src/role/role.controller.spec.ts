@@ -11,11 +11,11 @@ describe('RoleController', () => {
 
   const mockRoles: Role[] = [
     {
-      id: 'entity_01',
+      id: 'role_01',
       name: 'roleOne',
     },
     {
-      id: 'entity_02',
+      id: 'role_02',
       name: 'roleTwo',
     },
   ];
@@ -49,7 +49,7 @@ describe('RoleController', () => {
   });
 
   describe('getAllRoles', () => {
-    it('should return an array of entities', (done) => {
+    it('should return an array of roles', (done) => {
       mockService.getAllRoles.mockReturnValueOnce(of(mockRoles));
       controller.getAllRoles().subscribe({
         next: (res) => {
@@ -62,8 +62,8 @@ describe('RoleController', () => {
   });
 
   describe('getOne', () => {
-    const id = 'entity_00';
-    it('should return an entity', (done) => {
+    const id = 'role_00';
+    it('should return an role', (done) => {
       mockService.getOneRole.mockReturnValueOnce(of(mockRoles[0]));
       controller.getRole(id).subscribe({
         next: (res) => {
@@ -79,7 +79,7 @@ describe('RoleController', () => {
     const inputTemplate: CreateRoleDTO = {
       name: 'roleThree',
     };
-    it('should return the created entities', (done) => {
+    it('should return the created roles', (done) => {
       mockService.createRole.mockReturnValueOnce(of(mockRoles[0]));
       controller.createRole(inputTemplate).subscribe({
         next: (res) => {
@@ -92,7 +92,7 @@ describe('RoleController', () => {
   });
 
   describe('updateRole', () => {
-    const id = 'entity_01';
+    const id = 'role_01';
     it('should return Role', (done) => {
       mockService.updateRole.mockReturnValueOnce(of(mockRoles[0]));
       controller.updateRole(id).subscribe({
@@ -106,8 +106,8 @@ describe('RoleController', () => {
   });
 
   describe('deleteRole', () => {
-    const id = 'entity_00';
-    it('should return an array of entities', (done) => {
+    const id = 'role_00';
+    it('should return an array of roles', (done) => {
       mockService.deleteRole.mockReturnValueOnce(of(mockRoles[0]));
       controller.deleteRole(id).subscribe({
         next: (res) => {

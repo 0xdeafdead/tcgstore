@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id        String    @id @unique
-  email     String    @unique @db.Text
-  firstName String    @db.Text
-  lastName  String    @db.Text
-  createdAt DateTime  @default(now()) 
-  updatedAt DateTime  @updatedAt 
+  id          String    @id @unique
+  email       String    @unique @db.Text
+  firstName   String    @db.Text
+  lastName    String    @db.Text
+  createdAt   DateTime  @default(now()) 
+  updatedAt   DateTime  @updatedAt
+  permissions UserPermission[] 
 }
 
 model Entity {
@@ -29,6 +30,36 @@ model Entity {
 }
 
 model Role {
-  id        String    @id @unique
-  name      String    @db.Text
+  id          String        @id @unique
+  name        String        @db.Text
+  permissions RolePermission[]
+}
+
+model Permission {
+  id        String            @id @unique
+  name      String            @db.Text
+  roles     RolePermission[]
+  users     UserPermission[]
+}
+
+model RolePermission { 
+  role          Role        @relation(fields: [roleId], references:[id])
+  roleId        String
+  permission    Permission  @relation(fields: [permissionId], references:[id])
+  permissionId  String
+  assignedAt    DateTime    @default(now())
+  assignedBy    String      @db.Text
+
+  @@id([roleId,permissionId])
+}
+
+model UserPermission {
+  user          User        @relation(fields: [userId], references:[id])
+  userId        String
+  permission    Permission  @relation(fields: [permissionId], references:[id])
+  permissionId  String
+  assignedAt    DateTime    @default(now())
+  assignedBy    String      @db.Text
+
+  @@id([userId,permissionId])
 }
