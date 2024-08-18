@@ -25,6 +25,9 @@ jobs:
       - run: npx nx affected --target=lint --parallel=5 --base=origin/staging
       - run: npx nx affected --target=build --parallel=5 --base=origin/staging
       - run: npx nx affected --target=test --parallel=false --base=origin/staging
+        env:
+          SONAR_PROJECTKEY: ${{secrets.SONAR_PROJECTKEY}}
+          SONAR_ORGANIZATION: ${{secrets.SONAR_ORGANIZATION}}
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
@@ -33,5 +36,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
-          SONAR_PROJECTKEY: ${{secrets.SONAR_PROJECTKEY}}
-          SONAR_ORGANIZATION: ${{secrets.SONAR_ORGANIZATION}}
