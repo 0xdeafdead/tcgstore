@@ -1,6 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-import { Prisma, Role } from '@prisma/client';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   catchError,
   from,
@@ -10,16 +7,18 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-
-import { RoleRepository } from './role.repository';
-import { CreateRoleDTO } from './DTOs/createRole.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { Permission, Prisma } from '@prisma/client';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { PermissionRepository } from './permission.repository';
+import { CreatePermissionDTO } from './DTOs/createPermission.dto';
 
 @Injectable()
-export class RoleService {
-  private readonly logger = new Logger('RoleService');
-  constructor(private readonly repository: RoleRepository) {}
+export class PermissionService {
+  private readonly logger = new Logger('PermissionService');
+  constructor(private readonly repository: PermissionRepository) {}
 
-  getAllRoles(): Observable<Role[]> {
+  getAllPermissions(): Observable<Permission[]> {
     return from(this.repository.all()).pipe(
       catchError((err) => {
         this.logger.error(err.message);
@@ -28,13 +27,15 @@ export class RoleService {
     );
   }
 
-  getOneRole(id: string): Observable<Role> {
+  getOnePermission(id: string): Observable<Permission> {
     return from(this.repository.getOne({ where: { id } })).pipe(
-      switchMap((role) => {
-        if (!role) {
-          throw new NotFoundException('Could not find role with specified id');
+      switchMap((entity) => {
+        if (!entity) {
+          throw new NotFoundException(
+            'Could not find entity with specified id'
+          );
         } else {
-          return of(role);
+          return of(entity);
         }
       }),
       catchError((err) => {
@@ -44,7 +45,7 @@ export class RoleService {
     );
   }
 
-  createRole(input: CreateRoleDTO): Observable<Role> {
+  createPermission(input: CreatePermissionDTO): Observable<Permission> {
     return from(this.repository.create({ ...input, id: uuidv4() })).pipe(
       catchError((err) => {
         this.logger.error(err.message);
@@ -53,8 +54,8 @@ export class RoleService {
     );
   }
 
-  updateRole(id: string): Observable<Role> {
-    const input: Prisma.RoleUpdateInput = {
+  updatePermission(id: string): Observable<Permission> {
+    const input: Prisma.PermissionUpdateInput = {
       //This is intentional
     };
     return from(this.repository.update({ data: input, where: { id } })).pipe(
@@ -65,7 +66,7 @@ export class RoleService {
     );
   }
 
-  deleteRole(id: string): Observable<boolean> {
+  deletePermission(id: string): Observable<boolean> {
     return from(this.repository.delete({ where: { id } })).pipe(
       map(() => true),
       catchError((err) => {
