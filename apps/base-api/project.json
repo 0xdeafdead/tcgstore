@@ -8,8 +8,10 @@
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
+      "dependsOn": ["build"],
       "options": {
-        "buildTarget": "base-api:build"
+        "buildTarget": "base-api:build",
+        "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {

@@ -13,53 +13,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String    @id @unique
-  email       String    @unique @db.Text
-  firstName   String    @db.Text
-  lastName    String    @db.Text
-  createdAt   DateTime  @default(now()) 
-  updatedAt   DateTime  @updatedAt
-  permissions UserPermission[] 
+enum RoleName { 
+  USER
+  ADMIN
+  DEV
 }
 
-model Entity {
-  id          String    @id @unique 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model User {
+  id        String    @id @unique
+  email     String    @unique @db.Text
+  firstName String    @db.Text
+  lastName  String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userRole  UserRole?
 }
 
 model Role {
-  id          String        @id @unique
-  name        String        @db.Text
+  id          String           @id @unique
+  name        String           @db.Text
+  role        RoleName         @unique
   permissions RolePermission[]
+  users       UserRole[]
+}
+
+model UserRole {
+  user        User      @relation(fields:[userEmail], references:[email])
+  userEmail   String    @unique
+  role        Role      @relation(fields:[roleId], references:[id])
+  roleId      String
+  assignedAt  DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Permission {
-  id        String            @id @unique
-  name      String            @db.Text
-  roles     RolePermission[]
-  users     UserPermission[]
+  id    String           @id @unique
+  name  String           @db.Text
+  roles RolePermission[]
 }
 
-model RolePermission { 
-  role          Role        @relation(fields: [roleId], references:[id])
-  roleId        String
-  permission    Permission  @relation(fields: [permissionId], references:[id])
-  permissionId  String
-  assignedAt    DateTime    @default(now())
-  assignedBy    String      @db.Text
+model RolePermission {
+  role         Role       @relation(fields: [roleId], references: [id])
+  roleId       String
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  permissionId String
+  assignedAt   DateTime   @default(now())
+  assignedBy   String     @db.Text
 
-  @@id([roleId,permissionId])
+  @@id([roleId, permissionId])
 }
 
-model UserPermission {
-  user          User        @relation(fields: [userId], references:[id])
-  userId        String
-  permission    Permission  @relation(fields: [permissionId], references:[id])
-  permissionId  String
-  assignedAt    DateTime    @default(now())
-  assignedBy    String      @db.Text
+model Entity {
+  id        String   @id @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  @@id([userId,permissionId])
+model Credential {
+  email    String @id @unique
+  salt     String @db.VarChar
+  password String @db.VarChar
 }

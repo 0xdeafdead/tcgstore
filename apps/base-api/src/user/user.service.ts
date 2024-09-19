@@ -1,5 +1,4 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { UserRespository } from './user.repository';
 import {
   Observable,
   catchError,
@@ -13,14 +12,19 @@ import { v4 as uuidv4 } from 'uuid';
 import { Prisma, User } from '@prisma/client';
 
 import { CreateUserDTO } from './DTOs/createUser.dto';
+import { UserRespository } from './user.repository';
+import { GetUserOptions } from './types';
+import { RoleRepository } from '../role/role.repository';
+import { PermissionRepository } from '../permission/permission.repository';
+import { getRoleId } from '../utils/roles';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger('UserService');
   constructor(private readonly repository: UserRespository) {}
 
-  getAllUsers(): Observable<User[]> {
-    return from(this.repository.all()).pipe(
+  getAllUsers(options: GetUserOptions = { permissions: false }) {
+    return from(this.repository.all(options)).pipe(
       catchError((err) => {
         this.logger.error(err.message);
         return throwError(() => err);
@@ -28,11 +32,11 @@ export class UserService {
     );
   }
 
-  getOneUser(id: string): Observable<User> {
-    return from(this.repository.getOne({ where: { id } })).pipe(
+  getOneUser(findBy: Prisma.UserWhereUniqueInput, options?: GetUserOptions) {
+    return from(this.repository.getOne(findBy, options)).pipe(
       switchMap((user) => {
         if (!user) {
-          throw new NotFoundException('Could not find user with specified id');
+          throw new NotFoundException('Could not find user with discriminator');
         } else {
           return of(user);
         }
@@ -44,10 +48,14 @@ export class UserService {
     );
   }
 
-  createUser(input: CreateUserDTO): Observable<User> {
+  createUser(input: CreateUserDTO) {
+    const { email, firstName, lastName, role } = input;
     const newUser: Prisma.UserCreateInput = {
-      ...input,
+      email,
+      firstName,
+      lastName,
       id: uuidv4(),
+      userRole: { create: { roleId: getRoleId(role) } },
     };
     return from(this.repository.create(newUser)).pipe(
       catchError((err) => {

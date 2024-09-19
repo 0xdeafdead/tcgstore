@@ -11,7 +11,6 @@ import { Entity } from '@prisma/client';
 import { Observable } from 'rxjs';
 import { EntityService } from './entity.service';
 import { ControllerGuard } from '../guards/controller.guard';
-import { ACCESS_LEVEL } from '../types/shared';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -56,7 +55,6 @@ export class EntityController {
     description: 'Create single user.',
     status: '2XX',
   })
-  @UseGuards(ControllerGuard(ACCESS_LEVEL.USER))
   createEntity(): Observable<Entity> {
     return this.service.createEntity();
   }
@@ -74,7 +72,6 @@ export class EntityController {
     required: true,
     allowEmptyValue: false,
   })
-  @UseGuards(ControllerGuard(ACCESS_LEVEL.ADMIN))
   updateEntity(@Param('id') id: string): Observable<Entity> {
     return this.service.updateEntity(id);
   }
@@ -92,7 +89,6 @@ export class EntityController {
     required: true,
     allowEmptyValue: false,
   })
-  @UseGuards(ControllerGuard(ACCESS_LEVEL.DEV))
   deleteEntity(@Param('id') id: string): Observable<boolean> {
     return this.service.deleteEntity(id);
   }

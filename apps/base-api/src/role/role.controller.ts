@@ -1,4 +1,12 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Observable } from 'rxjs';
 import { Role } from '@prisma/client';
@@ -19,7 +27,7 @@ export class RoleController {
   }
 
   @Post()
-  createRole(input: CreateRoleDTO): Observable<Role> {
+  createRole(@Body() input: CreateRoleDTO): Observable<Role> {
     return this.service.createRole(input);
   }
 

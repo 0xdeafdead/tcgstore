@@ -8,5 +8,6 @@ import { UserRespository } from './user.repository';
   imports: [PrismaModule],
   providers: [UserService, UserRespository],
   controllers: [UserController],
+  exports: [UserService, PrismaModule],
 })
 export class UserModule {}

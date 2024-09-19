@@ -1,18 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Observable } from 'rxjs';
 import { User } from '@prisma/client';
 import { CreateUserDTO } from './DTOs/createUser.dto';
-import { ACCESS_LEVEL } from '../types/shared';
-import { ControllerGuard } from '../guards/controller.guard';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -20,6 +10,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { GetUserOptions } from './types';
 
 @ApiTags('User')
 @Controller('/user')
@@ -32,9 +23,8 @@ export class UserController {
     status: '2XX',
     isArray: true,
   })
-  @UseGuards(ControllerGuard(ACCESS_LEVEL.USER))
-  getAllUsers(): Observable<User[]> {
-    return this.service.getAllUsers();
+  getAllUsers(@Body() options?: GetUserOptions): Observable<User[]> {
+    return this.service.getAllUsers(options);
   }
 
   @Get('/:id')
@@ -50,9 +40,8 @@ export class UserController {
     required: true,
     allowEmptyValue: false,
   })
-  @UseGuards(ControllerGuard(ACCESS_LEVEL.USER))
   getOne(@Param('id') id: string): Observable<User> {
-    return this.service.getOneUser(id);
+    return this.service.getOneUser({ id });
   }
 
   @Post()
@@ -64,7 +53,6 @@ export class UserController {
     type: CreateUserDTO,
     description: 'Input object for creating a user',
   })
-  @UseGuards(ControllerGuard(ACCESS_LEVEL.USER))
   createUser(@Body() input: CreateUserDTO): Observable<User> {
     return this.service.createUser(input);
   }
@@ -82,7 +70,6 @@ export class UserController {
     required: true,
     allowEmptyValue: false,
   })
-  @UseGuards(ControllerGuard(ACCESS_LEVEL.DEV))
   deleteUser(@Param('id') id: string): Observable<boolean> {
     return this.service.deleteUser(id);
   }

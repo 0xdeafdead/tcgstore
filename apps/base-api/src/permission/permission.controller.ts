@@ -1,6 +1,14 @@
 import { Observable } from 'rxjs';
 import { Permission } from '@prisma/client';
-import { Delete, Param, Controller, Post, Put, Get } from '@nestjs/common';
+import {
+  Delete,
+  Param,
+  Controller,
+  Post,
+  Put,
+  Get,
+  Body,
+} from '@nestjs/common';
 import { PermissionService } from './permission.service';
 import { CreatePermissionDTO } from './DTOs/createPermission.dto';
 
@@ -19,7 +27,7 @@ export class PermissionController {
   }
 
   @Post()
-  createPermission(input: CreatePermissionDTO): Observable<Permission> {
+  createPermission(@Body() input: CreatePermissionDTO): Observable<Permission> {
     return this.service.createPermission(input);
   }
 
