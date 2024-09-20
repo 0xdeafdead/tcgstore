@@ -45,7 +45,22 @@ export class RoleService {
   }
 
   createRole(input: CreateRoleDTO): Observable<Role> {
-    return from(this.repository.create({ ...input, id: uuidv4() })).pipe(
+    const { permissionIds, ...restInput } = input;
+    const newRoleId = uuidv4();
+    const permissionsToAdd: Prisma.RolePermissionCreateManyRoleInput[] =
+      permissionIds.map<Prisma.RolePermissionCreateManyRoleInput>((id) => ({
+        permissionId: id,
+        assignedBy: '',
+      }));
+    return from(
+      this.repository.create({
+        ...restInput,
+        id: newRoleId,
+        permissions: {
+          createMany: { skipDuplicates: true, data: permissionsToAdd },
+        },
+      })
+    ).pipe(
       catchError((err) => {
         this.logger.error(err.message);
         return throwError(() => err);

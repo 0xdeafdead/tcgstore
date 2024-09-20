@@ -1,5 +1,12 @@
 import { RoleName } from '@prisma/client';
-import { IsEnum, IsString, Matches, MaxLength } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsString,
+  IsUUID,
+  Matches,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateRoleDTO {
   @IsString()
@@ -9,4 +16,8 @@ export class CreateRoleDTO {
 
   @IsEnum(RoleName)
   role = RoleName.USER;
+
+  @IsArray()
+  @IsUUID('4', { each: true })
+  permissionIds: string[];
 }
