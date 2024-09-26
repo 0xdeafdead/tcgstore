@@ -2,11 +2,11 @@
   "migrations": [
     {
       "cli": "nx",
-      "version": "19.1.0-beta.6",
-      "description": "Migrate no-extra-semi rules into user config, out of nx extendable configs",
-      "implementation": "./src/migrations/update-19-1-0-migrate-no-extra-semi/migrate-no-extra-semi",
-      "package": "@nx/eslint-plugin",
-      "name": "update-19-1-0-rename-no-extra-semi"
+      "version": "19.6.3-beta.0",
+      "description": "Migrate proxy config files to match new format from webpack-dev-server v5.",
+      "implementation": "./src/migrations/update-19-6-3/proxy-config",
+      "package": "@nx/webpack",
+      "name": "update-19-6-3-proxy-config"
     }
   ]
 }

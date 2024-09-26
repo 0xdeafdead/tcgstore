@@ -9,5 +9,6 @@ import { RoleController } from './role.controller';
   imports: [PrismaModule],
   providers: [RoleService, RoleRepository],
   controllers: [RoleController],
+  exports: [RoleRepository, PrismaModule],
 })
 export class RoleModule {}

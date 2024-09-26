@@ -34,5 +34,5 @@ export class CreateUserDTO {
 
   @IsEnum(RoleName)
   @IsOptional()
-  role? = RoleName.USER;
+  role?: RoleName;
 }

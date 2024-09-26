@@ -31,8 +31,37 @@ export class UserRespository {
     return users;
   }
 
-  async create(input: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data: input });
+  async create(
+    input: Prisma.UserCreateWithoutUserRoleInput,
+    options?: { roleId?: string }
+  ) {
+    const { email, firstName, id, lastName } = input;
+    return this.prisma.user.create({
+      data: {
+        email,
+        firstName,
+        id,
+        lastName,
+        userRole: { create: { roleId: options.roleId } },
+      },
+      include: {
+        userRole: {
+          include: {
+            role: {
+              include: {
+                permissions: {
+                  include: {
+                    permission: {
+                      select: { id: true, name: true },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   async getOne(findBy: Prisma.UserWhereUniqueInput, options?: GetUserOptions) {

@@ -13,6 +13,7 @@ import {
 
 import { RoleRepository } from './role.repository';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
+import { GetRoleOptions } from './types';
 
 @Injectable()
 export class RoleService {
@@ -28,8 +29,11 @@ export class RoleService {
     );
   }
 
-  getOneRole(id: string): Observable<Role> {
-    return from(this.repository.getOne({ where: { id } })).pipe(
+  getOneRole(
+    findBy: Prisma.RoleWhereUniqueInput,
+    options?: GetRoleOptions
+  ): Observable<Role> {
+    return from(this.repository.getOne(findBy, options)).pipe(
       switchMap((role) => {
         if (!role) {
           throw new NotFoundException('Could not find role with specified id');

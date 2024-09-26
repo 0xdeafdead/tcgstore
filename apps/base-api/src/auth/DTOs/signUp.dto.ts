@@ -1,6 +1,19 @@
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
+
 export class signUpDTO {
-    email:string;
-    password: string;
-    firstName:string;
-    lastName: string;
+  @IsEmail()
+  email: string;
+  @IsStrongPassword()
+  password: string;
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
 }

@@ -23,7 +23,7 @@ export class RoleController {
 
   @Get('/:id')
   getRole(@Param('id') id: string): Observable<Role> {
-    return this.service.getOneRole(id);
+    return this.service.getOneRole({ id });
   }
 
   @Post()

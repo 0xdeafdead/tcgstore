@@ -9,7 +9,7 @@ import {
   throwError,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, RoleName, User } from '@prisma/client';
 
 import { CreateUserDTO } from './DTOs/createUser.dto';
 import { UserRespository } from './user.repository';
@@ -21,7 +21,10 @@ import { getRoleId } from '../utils/roles';
 @Injectable()
 export class UserService {
   private readonly logger = new Logger('UserService');
-  constructor(private readonly repository: UserRespository) {}
+  constructor(
+    private readonly repository: UserRespository,
+    private readonly roleRepository: RoleRepository
+  ) {}
 
   getAllUsers(options: GetUserOptions = { permissions: false }) {
     return from(this.repository.all(options)).pipe(
@@ -49,15 +52,26 @@ export class UserService {
   }
 
   createUser(input: CreateUserDTO) {
+    console.log('input', input);
     const { email, firstName, lastName, role } = input;
-    const newUser: Prisma.UserCreateInput = {
-      email,
-      firstName,
-      lastName,
-      id: uuidv4(),
-      userRole: { create: { roleId: getRoleId(role) } },
-    };
-    return from(this.repository.create(newUser)).pipe(
+    return from(
+      this.roleRepository.getOne({
+        role: role || RoleName.USER,
+      })
+    ).pipe(
+      switchMap((role) =>
+        from(
+          this.repository.create(
+            {
+              email,
+              firstName,
+              lastName,
+              id: uuidv4(),
+            },
+            { roleId: role.id }
+          )
+        )
+      ),
       catchError((err) => {
         this.logger.error(err.message);
         return throwError(() => err);

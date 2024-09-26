@@ -29,7 +29,11 @@ export class AuthenticationService {
       switchMap(() => this.userService.createUser(userCreationParams)),
       switchMap((user) =>
         this.jwtService.generateToken(
-          {},
+          {
+            permissions: user.userRole.role.permissions.map(
+              (permission) => permission.permission.name
+            ),
+          },
           { audience: user.email, issuer: user.email }
         )
       ),
@@ -98,6 +102,7 @@ export class AuthenticationService {
       await this.prisma.credential.create({ data: input });
       return;
     } catch (err) {
+      console.log('err', err);
       const errMsg = `Could not hash password for email ${email}.`;
       this.logger.error(`${errMsg} Error: ${err.message}`);
       throw new Error(errMsg);

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Role } from '@prisma/client';
 import { PrismaService } from '../prisma-service/prisma.service';
+import { GetRoleOptions } from './types';
 
 @Injectable()
 export class RoleRepository {
@@ -16,8 +17,19 @@ export class RoleRepository {
     });
   }
 
-  async getOne(input: Prisma.RoleFindUniqueArgs): Promise<Role> {
-    return this.prisma.role.findUnique(input);
+  async getOne(findBy: Prisma.RoleWhereUniqueInput, options?: GetRoleOptions) {
+    return this.prisma.role.findUnique({
+      where: findBy,
+      include: {
+        permissions: {
+          include: {
+            permission: options?.permissions
+              ? { select: { id: true, name: true } }
+              : false,
+          },
+        },
+      },
+    });
   }
 
   async getMany(filters: Prisma.RoleFindManyArgs): Promise<Role[]> {
