@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma-service/prisma.service';
-import { RoleName, UserRole } from '@prisma/client';
+import { RoleName, UserRole, RolePermission } from '@prisma/client';
 import { getRoleId } from '../../utils/roles';
 import { UpdateUserRoleDTO } from '../DTOs/updateUserRole.dto';
 
@@ -15,6 +15,15 @@ export class AuthorizationService {
       },
       where: {
         userEmail: input.email,
+      },
+    });
+  }
+
+  addPermissionToRole(input: AddPermissionToRoleDTO): Promise<RolePermission> {
+    return this.prisma.rolePermission.create({
+      data: {
+        permissionId: input.permissionId,
+        roleId: input.roleId,
       },
     });
   }
