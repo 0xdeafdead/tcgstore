@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../../prisma-service/prisma.service';
-import { RoleName, UserRole, RolePermission } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import { getRoleId } from '../../utils/roles';
 import { UpdateUserRoleDTO } from '../DTOs/updateUserRole.dto';
+import { UpdatePermissionFromRoleDTO } from '../DTOs/updatePermissionFromRole.dto';
 
 @Injectable()
 export class AuthorizationService {
@@ -19,12 +20,34 @@ export class AuthorizationService {
     });
   }
 
-  addPermissionToRole(input: AddPermissionToRoleDTO): Promise<RolePermission> {
-    return this.prisma.rolePermission.create({
-      data: {
-        permissionId: input.permissionId,
-        roleId: input.roleId,
+  updatePermissionsToRole(
+    input: UpdatePermissionFromRoleDTO
+  ): Promise<boolean> {
+    const $addPermissions = this.prisma.rolePermission.createMany({
+      data: input.permissionsToAdd.map((id) => ({
+        permissionId: id,
+        assignedBy: '',
+        roleId: getRoleId(input.role),
+        assignedAt: new Date(),
+      })),
+      skipDuplicates: true,
+    });
+    const $removePermissions = this.prisma.rolePermission.deleteMany({
+      where: {
+        permissionId: {
+          in: input.permissionsToRemove,
+        },
+        roleId: getRoleId(input.role),
       },
     });
+    return this.prisma
+      .$transaction([$addPermissions, $removePermissions])
+      .then(() => true)
+      .catch((err) => {
+        throw new InternalServerErrorException(
+          'Could not update role. Error:',
+          err.message
+        );
+      });
   }
 }
