@@ -8,7 +8,7 @@ import { AuthorizationService } from './authorization/authorization.service';
 import { AuthorizationController } from './authorization/authorization.controller';
 
 @Module({
-  imports: [UserModule, JWTModule.forRoot({ secret: process.env.JWT_SECRET })],
+  imports: [UserModule],
   providers: [AuthenticationService, AuthorizationService],
   controllers: [AuthenticationController, AuthorizationController],
 })

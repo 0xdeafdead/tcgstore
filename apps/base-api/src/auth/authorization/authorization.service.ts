@@ -1,27 +1,43 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../../prisma-service/prisma.service';
-import { UserRole } from '@prisma/client';
 import { getRoleId } from '../../utils/roles';
-import { UpdateUserRoleDTO } from '../DTOs/updateUserRole.dto';
-import { UpdatePermissionFromRoleDTO } from '../DTOs/updatePermissionFromRole.dto';
+import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
+import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
 
 @Injectable()
 export class AuthorizationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  assignRoleToUser(input: UpdateUserRoleDTO): Promise<UserRole> {
-    return this.prisma.userRole.update({
-      data: {
-        roleId: getRoleId(input.roleName),
-      },
+  async updateRoleToUser(input: UpdateUserRolesDTO): Promise<boolean> {
+    const $addRoles = this.prisma.userRole.createMany({
+      data: input.rolesToAdd.map((id) => ({
+        userEmail: '',
+        roleId: getRoleId(id),
+        assignedAt: new Date(),
+      })),
+      skipDuplicates: true,
+    });
+    const roleIds = input.rolesToRemove.map((name) => getRoleId(name));
+    const $removeRoles = this.prisma.userRole.deleteMany({
       where: {
-        userEmail: input.email,
+        roleId: {
+          in: roleIds,
+        },
       },
     });
+    return this.prisma
+      .$transaction([$addRoles, $removeRoles])
+      .then(() => true)
+      .catch((err) => {
+        throw new InternalServerErrorException(
+          "Could not update user's role. Error:",
+          err.message
+        );
+      });
   }
 
-  updatePermissionsToRole(
-    input: UpdatePermissionFromRoleDTO
+  async updatePermissionsToRole(
+    input: UpdateRolePermissionsDTO
   ): Promise<boolean> {
     const $addPermissions = this.prisma.rolePermission.createMany({
       data: input.permissionsToAdd.map((id) => ({
@@ -45,7 +61,7 @@ export class AuthorizationService {
       .then(() => true)
       .catch((err) => {
         throw new InternalServerErrorException(
-          'Could not update role. Error:',
+          "Could not update role's permissions. Error:",
           err.message
         );
       });

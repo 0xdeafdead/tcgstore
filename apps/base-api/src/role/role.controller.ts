@@ -6,18 +6,24 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Observable } from 'rxjs';
 import { Role } from '@prisma/client';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { BaseGuard } from '@tcg-market-core/jwt';
 
 @Controller('role')
 export class RoleController {
   constructor(private readonly service: RoleService) {}
 
   @Get()
-  getAllRoles(): Observable<Role[]> {
+  @UseGuards(BaseGuard)
+  getAllRoles(@CurrentUser() user: any): Observable<Role[]> {
+    console.log('user', user);
+    return null;
     return this.service.getAllRoles();
   }
 

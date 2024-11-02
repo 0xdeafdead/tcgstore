@@ -13,6 +13,7 @@ export interface generateTokenParams {
   notBefore?: Date;
 }
 
+@Injectable()
 export class JWTService {
   private readonly secret: KeyObject;
 
