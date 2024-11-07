@@ -1,15 +1,11 @@
 import { RoleName } from '@prisma/client';
-import { IsArray, IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateUserRolesDTO {
-  @IsEmail()
-  email: string;
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 
-  @IsArray()
-  @IsEnum(RoleName, { each: true })
-  rolesToAdd: RoleName[];
-
-  @IsArray()
-  @IsEnum(RoleName, { each: true })
-  rolesToRemove: RoleName[];
+  @IsEnum(RoleName)
+  newRole: RoleName;
 }

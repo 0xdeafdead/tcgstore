@@ -20,15 +20,13 @@ export class RoleRepository {
   async getOne(findBy: Prisma.RoleWhereUniqueInput, options?: GetRoleOptions) {
     return this.prisma.role.findUnique({
       where: findBy,
-      include: {
-        permissions: {
-          include: {
-            permission: options?.permissions
-              ? { select: { id: true, name: true } }
-              : false,
-          },
-        },
-      },
+      include: options.permissions
+        ? {
+            permissions: {
+              select: { permission: { select: { id: true, name: true } } },
+            },
+          }
+        : null,
     });
   }
 

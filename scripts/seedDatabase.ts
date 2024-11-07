@@ -6,9 +6,9 @@ import dayjs from 'dayjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const devRoleId = uuidv4();
-  const adminRoleId = uuidv4();
-  const userRoleId = uuidv4();
+  const devRoleId = '17a411dc-ed38-4470-8aad-3aec455b3146';
+  const adminRoleId = 'fe0d7e86-d2b5-4180-a090-ab20ead2efc8';
+  const userRoleId = 'ec91dfd2-f32e-486d-8ef9-626072cc0504';
 
   const permissions = [
     { id: uuidv4(), name: 'read:role' },

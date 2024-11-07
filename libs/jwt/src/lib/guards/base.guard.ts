@@ -1,8 +1,11 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
+  HttpException,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JWTService } from '../jwt.service';
 
@@ -15,19 +18,23 @@ export class BaseGuard implements CanActivate {
     const token = request.headers.authorization?.split(' ')[1];
     console.log('token', token);
     if (!token) {
-      return false;
+      throw new UnauthorizedException('No authentication provided');
     }
     try {
-      const payload = await this.jwtService.verifyToken(token);
-      request['user'] = payload;
+      const payload = await this.jwtService.verifyToken(token, {
+        algorithms: ['HS256'],
+      });
+      request['user'] = {
+        sub: payload?.sub,
+        permissions: payload?.['permissions'],
+      };
       return true;
     } catch (error) {
-      return false;
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        throw new ForbiddenException('Invalid token');
+      }
     }
   }
-
-  // getGrapqhqlRequest(context: ExecutionContext) {
-  //   const ctx = GqlExecutionContext.create(context);
-  //   return ctx.getContext().req;
-  // }
 }

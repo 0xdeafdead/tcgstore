@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { JWTModule } from '@tcg-market-core/jwt';
 
 import { AuthenticationService } from './authentication/authentication.service';
 import { UserModule } from '../user/user.module';

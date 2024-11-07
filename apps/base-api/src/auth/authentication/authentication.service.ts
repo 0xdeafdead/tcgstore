@@ -28,14 +28,12 @@ export class AuthenticationService {
     return from(this.storePassword(userCreationParams.email, password)).pipe(
       switchMap(() => this.userService.createUser(userCreationParams)),
       switchMap((user) =>
-        this.jwtService.generateToken(
-          {
-            permissions: user.userRole.role.permissions.map(
-              (permission) => permission.permission.name
-            ),
-          },
-          { audience: user.email, issuer: user.email }
-        )
+        this.jwtService.generateToken({
+          permissions: user.userRole.role.permissions.map(
+            (permission) => permission.permission.name
+          ),
+          sub: user.email,
+        })
       ),
       catchError((err) => {
         const errMsg = `Could not create user for email ${userCreationParams.email}.`;
@@ -59,14 +57,12 @@ export class AuthenticationService {
         if (!user) {
           throw new NotFoundException(`User with email ${email} not found.`);
         }
-        return this.jwtService.generateToken(
-          {
-            permissions: user.userRole.role.permissions.map(
-              (permission) => permission.permission.name
-            ),
-          },
-          { audience: user.email, issuer: user.email }
-        );
+        return this.jwtService.generateToken({
+          permissions: user.userRole.role.permissions.map(
+            (permission) => permission.permission.name
+          ),
+          sub: user.email,
+        });
       }),
       catchError((err) => {
         const errMsg = `The user or password is wrong.`;

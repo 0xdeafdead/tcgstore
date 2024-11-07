@@ -1,9 +1,9 @@
-import { Body, Controller, Put } from '@nestjs/common';
+import { Body, Controller, Put, UseGuards } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
-import { Observable } from 'rxjs';
-import { UserRole } from '@prisma/client';
 import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
+import { CurrentUser } from '../../decorators/current-user.decorator';
+import { BaseGuard } from '@tcg-market-core/jwt';
 
 @Controller('authorization')
 export class AuthorizationController {
@@ -15,9 +15,11 @@ export class AuthorizationController {
   }
 
   @Put('/role')
+  @UseGuards(BaseGuard)
   updateRolePermissions(
+    @CurrentUser() user: string,
     @Body() input: UpdateRolePermissionsDTO
   ): Promise<boolean> {
-    return this.service.updatePermissionsToRole(input);
+    return this.service.updatePermissionsToRole(user, input);
   }
 }

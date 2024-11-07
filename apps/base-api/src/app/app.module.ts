@@ -16,7 +16,11 @@ import { JWTModule } from '@tcg-market-core/jwt';
     AuthModule,
     PermissionModule,
     RoleModule,
-    JWTModule.forRootAsync({ secret: process.env.JWT_SECRET }),
+    JWTModule.forRootAsync({
+      secret: process.env.JWT_SECRET,
+      audience: [process.env.BASE_API_AUDIENCE],
+      issuer: process.env.BASE_API_ISSUER,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

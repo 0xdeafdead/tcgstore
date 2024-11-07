@@ -14,6 +14,7 @@ import { Role } from '@prisma/client';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { BaseGuard } from '@tcg-market-core/jwt';
+import { GetRoleOptions } from './types';
 
 @Controller('role')
 export class RoleController {
@@ -22,14 +23,15 @@ export class RoleController {
   @Get()
   @UseGuards(BaseGuard)
   getAllRoles(@CurrentUser() user: any): Observable<Role[]> {
-    console.log('user', user);
-    return null;
     return this.service.getAllRoles();
   }
 
   @Get('/:id')
-  getRole(@Param('id') id: string): Observable<Role> {
-    return this.service.getOneRole({ id });
+  getRole(
+    @Param('id') id: string,
+    @Body() options?: GetRoleOptions
+  ): Observable<Role> {
+    return this.service.getOneRole({ id }, options);
   }
 
   @Post()

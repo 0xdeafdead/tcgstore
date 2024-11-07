@@ -27,7 +27,7 @@ export class UserController {
     return this.service.getAllUsers(options);
   }
 
-  @Get('/:id')
+  @Get('/:email')
   @ApiOkResponse({
     description: 'Fetch single user.',
     status: '2XX',
@@ -40,8 +40,11 @@ export class UserController {
     required: true,
     allowEmptyValue: false,
   })
-  getOne(@Param('id') id: string): Observable<User> {
-    return this.service.getOneUser({ id });
+  getOne(
+    @Param('email') email: string,
+    @Body() options?: GetUserOptions
+  ): Observable<User> {
+    return this.service.getOneUser({ email }, options);
   }
 
   @Post()

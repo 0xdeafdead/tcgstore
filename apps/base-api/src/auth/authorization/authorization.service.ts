@@ -9,24 +9,14 @@ export class AuthorizationService {
   constructor(private readonly prisma: PrismaService) {}
 
   async updateRoleToUser(input: UpdateUserRolesDTO): Promise<boolean> {
-    const $addRoles = this.prisma.userRole.createMany({
-      data: input.rolesToAdd.map((id) => ({
-        userEmail: '',
-        roleId: getRoleId(id),
-        assignedAt: new Date(),
-      })),
-      skipDuplicates: true,
-    });
-    const roleIds = input.rolesToRemove.map((name) => getRoleId(name));
-    const $removeRoles = this.prisma.userRole.deleteMany({
-      where: {
-        roleId: {
-          in: roleIds,
+    return this.prisma.userRole
+      .update({
+        where: { userId: input.id },
+        data: {
+          roleId: getRoleId(input.newRole),
+          assignedAt: new Date(),
         },
-      },
-    });
-    return this.prisma
-      .$transaction([$addRoles, $removeRoles])
+      })
       .then(() => true)
       .catch((err) => {
         throw new InternalServerErrorException(
@@ -37,12 +27,13 @@ export class AuthorizationService {
   }
 
   async updatePermissionsToRole(
+    currentUser: string,
     input: UpdateRolePermissionsDTO
   ): Promise<boolean> {
     const $addPermissions = this.prisma.rolePermission.createMany({
       data: input.permissionsToAdd.map((id) => ({
         permissionId: id,
-        assignedBy: '',
+        assignedBy: currentUser,
         roleId: getRoleId(input.role),
         assignedAt: new Date(),
       })),
