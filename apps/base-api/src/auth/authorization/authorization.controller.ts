@@ -4,13 +4,14 @@ import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
 import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
 import { CurrentUser } from '../../decorators/current-user.decorator';
 import { BaseGuard } from '@tcg-market-core/jwt';
+import { Observable } from 'rxjs';
 
 @Controller('authorization')
 export class AuthorizationController {
   constructor(private readonly service: AuthorizationService) {}
 
   @Put('/user')
-  updateUserRole(@Body() input: UpdateUserRolesDTO): Promise<boolean> {
+  updateUserRole(@Body() input: UpdateUserRolesDTO): Observable<boolean> {
     return this.service.updateRoleToUser(input);
   }
 
@@ -19,7 +20,7 @@ export class AuthorizationController {
   updateRolePermissions(
     @CurrentUser() user: string,
     @Body() input: UpdateRolePermissionsDTO
-  ): Promise<boolean> {
+  ): Observable<boolean> {
     return this.service.updatePermissionsToRole(user, input);
   }
 }
