@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@nestjs/common": "^9.0.0",
-    "dayjs": "^1.11.0",
-    "jose": "^4.11.4"
+    "@nestjs/common": "^10.0.2",
+    "dayjs": "^1.11.13",
+    "jose": "^5.8.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",
