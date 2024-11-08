@@ -13,7 +13,7 @@ import dayjs = require('dayjs');
 
 export interface generateTokenParams {
   issuer: string;
-  audience: string;
+  audience: string[];
   issuedAt?: Date;
   expiresAt?: Date;
   notBefore?: Date;
@@ -63,11 +63,7 @@ export class JWTService {
     options?: JWTVerifyOptions
   ): Promise<JWTPayload | null> {
     try {
-      const { payload, protectedHeader } = await jwtVerify(
-        token,
-        this.secret,
-        options
-      );
+      const { payload } = await jwtVerify(token, this.secret, options);
       return payload;
     } catch (err: any) {
       if (err.code === 'ERR_JWT_EXPIRED') {
