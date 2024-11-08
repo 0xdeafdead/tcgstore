@@ -25,11 +25,12 @@ export class AuthenticationService {
 
   async verifyPassword(email: string, passAtemp: string): Promise<boolean> {
     try {
-      return this.prisma.credential
-        .findUniqueOrThrow({ select: { password: true }, where: { email } })
-        .then(({ password }) => {
-          return compare(passAtemp, password);
-        });
+      const { password } = await this.prisma.credential.findUniqueOrThrow({
+        select: { password: true },
+        where: { email },
+      });
+
+      return compare(passAtemp, password);
     } catch (err) {
       this.logger.error(`Could not validate password for email ${email}`);
       throw err;

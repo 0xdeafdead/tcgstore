@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorizationService } from './authorization.service';
-import { Prisma, PrismaClient, RoleName } from '@prisma/client';
+import { PrismaClient, RoleName } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { PrismaService } from '../../prisma-service/prisma.service';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
