@@ -15,7 +15,7 @@ export class CreateRoleDTO {
   name: string;
 
   @IsEnum(RoleName)
-  role = RoleName.USER;
+  role: RoleName = RoleName.USER;
 
   @IsArray()
   @IsUUID('4', { each: true })

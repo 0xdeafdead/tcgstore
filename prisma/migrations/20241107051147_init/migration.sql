@@ -24,10 +24,11 @@ CREATE TABLE "Role" (
 
 -- CreateTable
 CREATE TABLE "UserRole" (
-    "userEmail" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "roleId" TEXT NOT NULL,
     "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+
+    CONSTRAINT "UserRole_pkey" PRIMARY KEY ("userId","roleId")
 );
 
 -- CreateTable
@@ -79,7 +80,7 @@ CREATE UNIQUE INDEX "Role_id_key" ON "Role"("id");
 CREATE UNIQUE INDEX "Role_role_key" ON "Role"("role");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "UserRole_userEmail_key" ON "UserRole"("userEmail");
+CREATE UNIQUE INDEX "UserRole_userId_key" ON "UserRole"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Permission_id_key" ON "Permission"("id");
@@ -91,7 +92,7 @@ CREATE UNIQUE INDEX "Entity_id_key" ON "Entity"("id");
 CREATE UNIQUE INDEX "Credential_email_key" ON "Credential"("email");
 
 -- AddForeignKey
-ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_userEmail_fkey" FOREIGN KEY ("userEmail") REFERENCES "User"("email") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

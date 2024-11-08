@@ -31,7 +31,7 @@ export class RoleService {
 
   getOneRole(
     findBy: Prisma.RoleWhereUniqueInput,
-    options?: GetRoleOptions
+    options: GetRoleOptions = { permissions: false }
   ): Observable<Role> {
     return from(this.repository.getOne(findBy, options)).pipe(
       switchMap((role) => {

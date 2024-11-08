@@ -1,10 +1,11 @@
 import { RoleName } from '@prisma/client';
-import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateUserRoleDTO {
-  @IsEmail()
-  email: string;
+export class UpdateUserRolesDTO {
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 
   @IsEnum(RoleName)
-  roleName: RoleName;
+  newRole: RoleName;
 }

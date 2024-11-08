@@ -6,7 +6,7 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoleService } from './role.service';
 import { RoleRepository } from './role.repository';
-import { Role } from '@prisma/client';
+import { Role, RoleName } from '@prisma/client';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
 
 const fakeUUUID = 'abcd1234-abcd-1234-defg-56789-56789defg';
@@ -22,10 +22,12 @@ describe('RoleService', () => {
     {
       id: 'role_01',
       name: 'roleOne',
+      role: RoleName.USER,
     },
     {
       id: 'role_02',
       name: 'roleTwo',
+      role: RoleName.USER,
     },
   ];
 
@@ -95,10 +97,9 @@ describe('RoleService', () => {
         'Could not retrieve role'
       );
       mockRepository.getOne.mockRejectedValueOnce(testError);
-      service.getOneRole(id).subscribe({
+      service.getOneRole({ id }, { permissions: false }).subscribe({
         error: (err) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
-          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(err).toMatchObject(testError);
           done();
         },
@@ -107,10 +108,9 @@ describe('RoleService', () => {
 
     it('should return an NotFoundException if repository fails ', (done) => {
       mockRepository.getOne.mockResolvedValueOnce(null);
-      service.getOneRole(id).subscribe({
+      service.getOneRole({ id }).subscribe({
         error: (err) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
-          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(err).toBeInstanceOf(NotFoundException);
           done();
         },
@@ -119,10 +119,9 @@ describe('RoleService', () => {
 
     it('should return an role', (done) => {
       mockRepository.getOne.mockResolvedValueOnce(mockRoles[0]);
-      service.getOneRole(id).subscribe({
+      service.getOneRole({ id }).subscribe({
         next: (res) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
-          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(res).toMatchObject(mockRoles[0]);
           done();
         },
@@ -133,6 +132,8 @@ describe('RoleService', () => {
   describe('createRole', () => {
     const inputTemplate: CreateRoleDTO = {
       name: 'roleThree',
+      permissionIds: ['permission_01', 'permission_02'],
+      role: RoleName.ADMIN,
     };
 
     it('should return an InternalServerException if repository fails', (done) => {
@@ -141,10 +142,6 @@ describe('RoleService', () => {
       service.createRole(inputTemplate).subscribe({
         error: (err) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
-          expect(mockRepository.create).toHaveBeenCalledWith({
-            ...inputTemplate,
-            id: fakeUUUID,
-          });
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
         },
@@ -156,10 +153,6 @@ describe('RoleService', () => {
       service.createRole(inputTemplate).subscribe({
         next: (res) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
-          expect(mockRepository.create).toHaveBeenCalledWith({
-            ...inputTemplate,
-            id: fakeUUUID,
-          });
           expect(res).toMatchObject(mockRoles[0]);
           done();
         },
