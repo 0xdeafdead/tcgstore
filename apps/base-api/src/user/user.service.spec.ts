@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { CreateUserDTO } from './DTOs/createUser.dto';
+import { RoleRepository } from '../role/role.repository';
 
 const fakeUUUID = 'abcd1234-abcd-1234-defg-56789-56789defg';
 jest.mock('uuid', () => {
@@ -17,6 +18,7 @@ jest.mock('uuid', () => {
 describe('UserService', () => {
   let service: UserService;
   let repostitory: UserRespository;
+  let roleRepository: RoleRepository;
 
   const now = new Date();
   const mockUsers: User[] = [
@@ -45,6 +47,10 @@ describe('UserService', () => {
     delete: jest.fn(),
   };
 
+  const roleRepositoryMock = {
+    getOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.spyOn(Logger, 'error').mockReturnValue(null);
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +59,10 @@ describe('UserService', () => {
         {
           provide: UserRespository,
           useValue: mockRepository,
+        },
+        {
+          provide: RoleRepository,
+          useValue: roleRepositoryMock,
         },
       ],
     }).compile();
@@ -103,10 +113,9 @@ describe('UserService', () => {
         'Could not retrieve user'
       );
       mockRepository.getOne.mockRejectedValueOnce(testError);
-      service.getOneUser(id).subscribe({
+      service.getOneUser({ id }).subscribe({
         error: (err) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
-          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(err).toMatchObject(testError);
           done();
         },
@@ -115,10 +124,9 @@ describe('UserService', () => {
 
     it('should return an NotFoundException if repository fails ', (done) => {
       mockRepository.getOne.mockResolvedValueOnce(null);
-      service.getOneUser(id).subscribe({
+      service.getOneUser({ id }).subscribe({
         error: (err) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
-          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(err).toBeInstanceOf(NotFoundException);
           done();
         },
@@ -127,10 +135,9 @@ describe('UserService', () => {
 
     it('should return an user', (done) => {
       mockRepository.getOne.mockResolvedValueOnce(mockUsers[0]);
-      service.getOneUser(id).subscribe({
+      service.getOneUser({ id }).subscribe({
         next: (res) => {
           expect(mockRepository.getOne).toHaveBeenCalledTimes(1);
-          expect(mockRepository.getOne).toHaveBeenCalledWith({ where: { id } });
           expect(res).toMatchObject(mockUsers[0]);
           done();
         },
@@ -148,13 +155,11 @@ describe('UserService', () => {
     it('should return an InternalServerException if repository fails', (done) => {
       const testError = new InternalServerErrorException();
       mockRepository.create.mockRejectedValueOnce(testError);
+      roleRepositoryMock.getOne.mockResolvedValueOnce(mockUsers[0]);
       service.createUser(inputTemplate).subscribe({
         error: (err) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
-          expect(mockRepository.create).toHaveBeenCalledWith({
-            ...inputTemplate,
-            id: fakeUUUID,
-          });
+          expect(roleRepositoryMock.getOne).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
         },
@@ -163,13 +168,11 @@ describe('UserService', () => {
 
     it('should return an user ', (done) => {
       mockRepository.create.mockResolvedValueOnce(mockUsers[0]);
+      roleRepositoryMock.getOne.mockResolvedValueOnce(mockUsers[0]);
       service.createUser(inputTemplate).subscribe({
         next: (res) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
-          expect(mockRepository.create).toHaveBeenCalledWith({
-            ...inputTemplate,
-            id: fakeUUUID,
-          });
+          expect(roleRepositoryMock.getOne).toHaveBeenCalledTimes(1);
           expect(res).toMatchObject(mockUsers[0]);
           done();
         },

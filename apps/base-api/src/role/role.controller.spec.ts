@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoleService } from './role.service';
 import { RoleController } from './role.controller';
-import { Role } from '@prisma/client';
+import { Role, RoleName } from '@prisma/client';
 import { of } from 'rxjs';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
+import { BaseGuard } from '@tcg-market-core/jwt';
 
 describe('RoleController', () => {
   let controller: RoleController;
@@ -13,10 +14,12 @@ describe('RoleController', () => {
     {
       id: 'role_01',
       name: 'roleOne',
+      role: 'USER',
     },
     {
       id: 'role_02',
       name: 'roleTwo',
+      role: 'USER',
     },
   ];
 
@@ -37,7 +40,10 @@ describe('RoleController', () => {
           useValue: mockService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(BaseGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get<RoleController>(RoleController);
     service = module.get<RoleService>(RoleService);
@@ -51,7 +57,7 @@ describe('RoleController', () => {
   describe('getAllRoles', () => {
     it('should return an array of roles', (done) => {
       mockService.getAllRoles.mockReturnValueOnce(of(mockRoles));
-      controller.getAllRoles().subscribe({
+      controller.getAllRoles('testing@test.com').subscribe({
         next: (res) => {
           expect(mockService.getAllRoles).toHaveBeenCalledTimes(1);
           expect(Array.isArray(res)).toBeTruthy();
@@ -78,6 +84,8 @@ describe('RoleController', () => {
   describe('createRole', () => {
     const inputTemplate: CreateRoleDTO = {
       name: 'roleThree',
+      permissionIds: ['permission_01', 'permission_02'],
+      role: RoleName.ADMIN,
     };
     it('should return the created roles', (done) => {
       mockService.createRole.mockReturnValueOnce(of(mockRoles[0]));

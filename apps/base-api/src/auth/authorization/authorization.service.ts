@@ -1,12 +1,14 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma-service/prisma.service';
 import { getRoleId } from '../../utils/roles';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
 import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
 import { catchError, from, map, Observable, throwError } from 'rxjs';
+import { errorHandler } from '../../utils/errorHandler';
 
 @Injectable()
 export class AuthorizationService {
+  private readonly logger = new Logger('AuthorizationService');
   constructor(private readonly prisma: PrismaService) {}
 
   updateRoleToUser(input: UpdateUserRolesDTO): Observable<boolean> {
@@ -20,15 +22,11 @@ export class AuthorizationService {
       })
     ).pipe(
       map(() => true),
-      catchError((err) =>
-        throwError(
-          () =>
-            new InternalServerErrorException(
-              "Could not update user's role. Error:",
-              err.message
-            )
-        )
-      )
+      catchError((err) => {
+        const errMsg = `Could not update user's role. Error:${err.message}`;
+        this.logger.error(errMsg);
+        return throwError(() => errorHandler(err, errMsg));
+      })
     );
   }
 
@@ -57,15 +55,11 @@ export class AuthorizationService {
       this.prisma.$transaction([addPermissionsBatch, removePermissionsBatch])
     ).pipe(
       map(() => true),
-      catchError((err) =>
-        throwError(
-          () =>
-            new InternalServerErrorException(
-              "Could not update role's permissions. Error:",
-              err.message
-            )
-        )
-      )
+      catchError((err) => {
+        const errMsg = `Could not update role's permissions. Error:${err.message}`;
+        this.logger.error(errMsg);
+        return throwError(() => errorHandler(err, errMsg));
+      })
     );
   }
 }

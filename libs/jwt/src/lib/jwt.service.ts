@@ -1,4 +1,10 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { createSecretKey, KeyObject } from 'crypto';
 import { JWTModuleConfig } from './jwt.types';
 import { JWT_MODULE_CONFIG } from './jwt.constants';
@@ -18,6 +24,7 @@ export class JWTService {
   private readonly secret: KeyObject;
   private readonly issuer: string;
   private readonly audience: string[];
+  private readonly logger = new Logger('AuthenticationService');
 
   constructor(
     @Inject(JWT_MODULE_CONFIG)
@@ -35,14 +42,20 @@ export class JWTService {
     const now = dayjs();
     const issuedAt = now.toDate();
     const expiresAt = now.add(24, 'hour').toDate();
-    return new SignJWT(payload)
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuer(params?.issuer || this.issuer)
-      .setAudience(params?.audience || this.audience)
-      .setIssuedAt(params?.issuedAt || issuedAt)
-      .setNotBefore(params?.notBefore || params?.issuedAt || issuedAt)
-      .setExpirationTime(params?.expiresAt || expiresAt)
-      .sign(this.secret);
+    try {
+      return new SignJWT(payload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuer(params?.issuer || this.issuer)
+        .setAudience(params?.audience || this.audience)
+        .setIssuedAt(params?.issuedAt || issuedAt)
+        .setNotBefore(params?.notBefore || params?.issuedAt || issuedAt)
+        .setExpirationTime(params?.expiresAt || expiresAt)
+        .sign(this.secret);
+    } catch (err: any) {
+      const errMsg = 'Unable to generate token';
+      this.logger.error(errMsg + ' Error: ' + err.message);
+      throw new InternalServerErrorException(errMsg);
+    }
   }
 
   async verifyToken(
@@ -55,8 +68,6 @@ export class JWTService {
         this.secret,
         options
       );
-      console.log('payload', payload);
-      console.log('protectedHeader', protectedHeader);
       return payload;
     } catch (err: any) {
       if (err.code === 'ERR_JWT_EXPIRED') {

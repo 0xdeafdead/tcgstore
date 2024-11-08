@@ -52,7 +52,6 @@ export class UserService {
   }
 
   createUser(input: CreateUserDTO) {
-    console.log('input', input);
     const { email, firstName, lastName, role } = input;
     return from(
       this.roleRepository.getOne({

@@ -22,7 +22,7 @@ export class RoleController {
 
   @Get()
   @UseGuards(BaseGuard)
-  getAllRoles(@CurrentUser() user: any): Observable<Role[]> {
+  getAllRoles(@CurrentUser() user: string): Observable<Role[]> {
     return this.service.getAllRoles();
   }
 

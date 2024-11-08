@@ -1,3 +1,9 @@
 {
-    "material-icon-theme.activeIconPack": "nest"
+    "material-icon-theme.activeIconPack": "nest",
+    "testing.openTesting": "neverOpen",
+    "jest.outputConfig": {
+        "revealOn": "run",
+        "revealWithFocus": "none",
+        "clearOnRun": "none"
+    }
 }

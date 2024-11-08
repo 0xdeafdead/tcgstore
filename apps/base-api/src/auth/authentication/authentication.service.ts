@@ -1,6 +1,5 @@
 import {
   Injectable,
-  InternalServerErrorException,
   Logger,
   NotFoundException,
   UnauthorizedException,
@@ -13,6 +12,7 @@ import { genSalt, hash, compare } from 'bcryptjs';
 import { PrismaService } from '../../prisma-service/prisma.service';
 import { Prisma } from '@prisma/client';
 import { JWTService } from '@tcg-market-core/jwt';
+import { errorHandler } from '../../utils/errorHandler';
 
 @Injectable()
 export class AuthenticationService {
@@ -23,6 +23,68 @@ export class AuthenticationService {
     private readonly jwtService: JWTService
   ) {}
 
+  async verifyPassword(email: string, passAtemp: string): Promise<boolean> {
+    try {
+      return this.prisma.credential
+        .findUniqueOrThrow({ select: { password: true }, where: { email } })
+        .then(({ password }) => {
+          return compare(passAtemp, password);
+        });
+    } catch (err) {
+      this.logger.error(`Could not validate password for email ${email}`);
+      throw err;
+    }
+  }
+
+  signIn(input: signInDTO): Observable<string> {
+    const { email, password } = input;
+    return from(this.verifyPassword(email, password)).pipe(
+      switchMap((isVerified) => {
+        if (!isVerified) {
+          throw new UnauthorizedException(`Wrong password or email`);
+        }
+        return this.userService.getOneUser({ email }, { permissions: true });
+      }),
+      switchMap((user) => {
+        if (!user) {
+          throw new NotFoundException(`User with email ${email} not found.`);
+        }
+        return this.jwtService.generateToken({
+          permissions: user.userRole.role.permissions.map(
+            (permission) => permission.permission.name
+          ),
+          sub: user.email,
+        });
+      }),
+      catchError((err) => {
+        const errMsg = `The user or password is wrong.`;
+        this.logger.error(errMsg + ` Error: ${err.message}`);
+        return throwError(() => errorHandler(err, errMsg));
+      })
+    );
+  }
+
+  async storePassword(email: string, password: string): Promise<void> {
+    try {
+      const salt = await genSalt();
+      const hashedPass = await hash(password, salt);
+      const input: Prisma.CredentialCreateInput = {
+        email,
+        salt,
+        password: hashedPass,
+      };
+      await this.prisma.credential.create({ data: input });
+      return;
+    } catch (err) {
+      const errMsg = `Could not hash password for email ${email}.`;
+      this.logger.error(`${errMsg} Error: ${err.message}`);
+      throw new Error(errMsg);
+    }
+  }
+
+  /*TODO: Create a dynamic transaction that starts here and pass it to storePassword
+   * to make the singUp atomic
+   */
   signUp(input: signUpDTO): Observable<string> {
     const { password, ...userCreationParams } = input;
     return from(this.storePassword(userCreationParams.email, password)).pipe(
@@ -38,70 +100,8 @@ export class AuthenticationService {
       catchError((err) => {
         const errMsg = `Could not create user for email ${userCreationParams.email}.`;
         this.logger.error(errMsg + ` Error: ${err.message}`);
-        return throwError(() => new InternalServerErrorException(errMsg));
+        return throwError(() => errorHandler(err, errMsg));
       })
     );
-  }
-
-  signIn(input: signInDTO): Observable<string> {
-    const { email, password } = input;
-    return from(this.verifyPassword(email, password)).pipe(
-      switchMap((isVerified) => {
-        if (!isVerified) {
-          throw new UnauthorizedException(`Wrong password or email`);
-        }
-        return this.userService.getOneUser({ email }, { permissions: true });
-      }),
-      switchMap((user) => {
-        console.log('user', user);
-        if (!user) {
-          throw new NotFoundException(`User with email ${email} not found.`);
-        }
-        return this.jwtService.generateToken({
-          permissions: user.userRole.role.permissions.map(
-            (permission) => permission.permission.name
-          ),
-          sub: user.email,
-        });
-      }),
-      catchError((err) => {
-        const errMsg = `The user or password is wrong.`;
-        this.logger.error(errMsg + `Error: ${err.msg}`);
-        return throwError(() => new UnauthorizedException(errMsg));
-      })
-    );
-  }
-
-  async verifyPassword(email: string, passAtemp: string): Promise<boolean> {
-    try {
-      return this.prisma.credential
-        .findUniqueOrThrow({ select: { password: true }, where: { email } })
-        .then(({ password }) => {
-          return compare(passAtemp, password);
-        });
-    } catch (err) {
-      console.log('err', err);
-      this.logger.error(`Could not validate password for email ${email}`);
-      throw err;
-    }
-  }
-
-  async storePassword(email: string, password: string): Promise<void> {
-    try {
-      const salt = await genSalt();
-      const hashedPass = await hash(password, salt);
-      const input: Prisma.CredentialCreateInput = {
-        email,
-        salt,
-        password: hashedPass,
-      };
-      await this.prisma.credential.create({ data: input });
-      return;
-    } catch (err) {
-      console.log('err', err);
-      const errMsg = `Could not hash password for email ${email}.`;
-      this.logger.error(`${errMsg} Error: ${err.message}`);
-      throw new Error(errMsg);
-    }
   }
 }

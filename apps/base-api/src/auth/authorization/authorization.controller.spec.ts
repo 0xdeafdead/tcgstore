@@ -37,7 +37,7 @@ describe('AuthorizationController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-    expect(controller).toBeInstanceOf(AuthorizationController);
+    expect(service).toBeDefined();
   });
 
   describe('updateUserRole', () => {
