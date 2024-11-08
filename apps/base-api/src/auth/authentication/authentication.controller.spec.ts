@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
-import { signUpDTO } from '../DTOs/signUp.dto';
+import { SignUpDTO } from '../DTOs/signUp.dto';
 import { of } from 'rxjs';
 
 describe('AuthenticationController', () => {
@@ -35,7 +35,7 @@ describe('AuthenticationController', () => {
 
   describe('signUp', () => {
     it('should return token when sign up', (done) => {
-      const input: signUpDTO = {
+      const input: SignUpDTO = {
         email: 'email',
         password: 'password',
         firstName: 'firstName',

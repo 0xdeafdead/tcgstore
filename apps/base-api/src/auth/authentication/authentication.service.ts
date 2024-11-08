@@ -4,9 +4,9 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { signInDTO } from '../DTOs/sigIn.dto';
+import { SignInDTO } from '../DTOs/sigIn.dto';
 import { UserService } from '../../user/user.service';
-import { signUpDTO } from '../DTOs/signUp.dto';
+import { SignUpDTO } from '../DTOs/signUp.dto';
 import { catchError, from, Observable, switchMap, throwError } from 'rxjs';
 import { genSalt, hash, compare } from 'bcryptjs';
 import { PrismaService } from '../../prisma-service/prisma.service';
@@ -37,7 +37,7 @@ export class AuthenticationService {
     }
   }
 
-  signIn(input: signInDTO): Observable<string> {
+  signIn(input: SignInDTO): Observable<string> {
     const { email, password } = input;
     return from(this.verifyPassword(email, password)).pipe(
       switchMap((isVerified) => {
@@ -86,7 +86,7 @@ export class AuthenticationService {
   /*TODO: Create a dynamic transaction that starts here and pass it to storePassword
    * to make the singUp atomic
    */
-  signUp(input: signUpDTO): Observable<string> {
+  signUp(input: SignUpDTO): Observable<string> {
     const { password, ...userCreationParams } = input;
     return from(this.storePassword(userCreationParams.email, password)).pipe(
       switchMap(() => this.userService.createUser(userCreationParams)),

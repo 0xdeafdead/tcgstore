@@ -9,14 +9,12 @@ import {
   throwError,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { Prisma, RoleName, User } from '@prisma/client';
+import { Prisma, RoleName } from '@prisma/client';
 
 import { CreateUserDTO } from './DTOs/createUser.dto';
 import { UserRespository } from './user.repository';
 import { GetUserOptions } from './types';
 import { RoleRepository } from '../role/role.repository';
-import { PermissionRepository } from '../permission/permission.repository';
-import { getRoleId } from '../utils/roles';
 
 @Injectable()
 export class UserService {

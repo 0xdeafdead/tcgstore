@@ -11,7 +11,7 @@ import { JWT_MODULE_CONFIG } from './jwt.constants';
 import { JWTPayload, jwtVerify, JWTVerifyOptions, SignJWT } from 'jose';
 import dayjs = require('dayjs');
 
-export interface generateTokenParams {
+export interface GenerateTokenParams {
   issuer: string;
   audience: string[];
   issuedAt?: Date;
@@ -37,7 +37,7 @@ export class JWTService {
 
   async generateToken(
     payload: Record<string, unknown>,
-    params?: generateTokenParams
+    params?: GenerateTokenParams
   ): Promise<string> {
     const now = dayjs();
     const issuedAt = now.toDate();
@@ -45,11 +45,11 @@ export class JWTService {
     try {
       return new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
-        .setIssuer(params?.issuer || this.issuer)
-        .setAudience(params?.audience || this.audience)
-        .setIssuedAt(params?.issuedAt || issuedAt)
-        .setNotBefore(params?.notBefore || params?.issuedAt || issuedAt)
-        .setExpirationTime(params?.expiresAt || expiresAt)
+        .setIssuer(params?.issuer ?? this.issuer)
+        .setAudience(params?.audience ?? this.audience)
+        .setIssuedAt(params?.issuedAt ?? issuedAt)
+        .setNotBefore(params?.notBefore ?? params?.issuedAt ?? issuedAt)
+        .setExpirationTime(params?.expiresAt ?? expiresAt)
         .sign(this.secret);
     } catch (err: any) {
       const errMsg = 'Unable to generate token';

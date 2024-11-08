@@ -11,9 +11,9 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { signInDTO } from '../DTOs/sigIn.dto';
+import { SignInDTO } from '../DTOs/sigIn.dto';
 import { of, throwError } from 'rxjs';
-import { signUpDTO } from '../DTOs/signUp.dto';
+import { SignUpDTO } from '../DTOs/signUp.dto';
 
 //CANNOT REDIFINE COMPARE FROM BCRYPT
 jest.mock('bcryptjs', () => ({
@@ -134,7 +134,7 @@ describe('AuthenticationService', () => {
   });
 
   describe('signIn', () => {
-    const input: signInDTO = {
+    const input: SignInDTO = {
       email: 'testing@test.com',
       password: 'notReallyStrongPassword',
     };
@@ -225,7 +225,7 @@ describe('AuthenticationService', () => {
   });
 
   describe('signUp', () => {
-    const input: signUpDTO = {
+    const input: SignUpDTO = {
       email: 'testing@test.com',
       password: 'notReallyStrongPassword',
       firstName: 'test',

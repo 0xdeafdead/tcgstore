@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { generateTokenParams, JWTService } from './jwt.service';
+import { GenerateTokenParams, JWTService } from './jwt.service';
 import { JWT_MODULE_CONFIG } from './jwt.constants';
 import dayjs = require('dayjs');
 import MockDate from 'mockdate';
@@ -48,7 +48,7 @@ describe('JWTService', () => {
     //one day after date cons
     const now = dayjs().add(1, 'day');
     const expire = now.add(24, 'hour').toDate();
-    const params: generateTokenParams = {
+    const params: GenerateTokenParams = {
       issuer: 'fakeIssuer2',
       audience: ['fakeAudience2'],
       issuedAt: now.toDate(),
