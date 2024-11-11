@@ -21,6 +21,42 @@
           "buildTarget": "base-api:build:production"
         }
       }
+    },
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/base-api",
+        "main": "apps/base-api/src/main.ts",
+        "tsConfig": "apps/base-api/tsconfig.app.json",
+        "webpackConfig": "apps/base-api/webpack.config.js",
+        "generatePackageJson": true,
+        "assets": [
+        ],
+        "babelUpwardRootMode": true
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/base-api/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/base-api/**/*.ts"]
+      }
     }
   }
 }
