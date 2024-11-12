@@ -1,23 +1,23 @@
-version: "3.9"
+version: '3.9'
 
 services:
   postgres_db:
     image: postgres:16.2-alpine3.18
     restart: always
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - pg_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: tcg_db
-      POSTGRES_PASSWORD: tcgapp
-      POSTGRES_USER: deafdead
-  
+      POSTGRES_DB: ume_db
+      POSTGRES_PASSWORD: hireMe
+      POSTGRES_USER: please
+
   adminer:
     restart: always
     image: adminer
     ports:
-      - "8080:8080"
+      - '8080:8080'
 volumes:
   pg_data:
     driver: local

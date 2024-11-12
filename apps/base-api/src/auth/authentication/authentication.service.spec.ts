@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthenticationService } from './authentication.service';
 import { UserService } from '../../user/user.service';
 import { PrismaService } from '../../prisma-service/prisma.service';
-import { JWTService } from '@tcg-market-core/jwt';
+import { JWTService } from '@user-mgmt-engine/jwt';
 import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import * as bcrypt from 'bcryptjs';

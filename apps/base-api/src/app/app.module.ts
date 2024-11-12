@@ -7,7 +7,7 @@ import { EntityModule } from '../entity/entity.module';
 import { AuthModule } from '../auth/auth.module';
 import { PermissionModule } from '../permission/permission.module';
 import { RoleModule } from '../role/role.module';
-import { JWTModule } from '@tcg-market-core/jwt';
+import { JWTModule } from '@user-mgmt-engine/jwt';
 
 @Module({
   imports: [

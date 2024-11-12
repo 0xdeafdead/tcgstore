@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@tcg-market-core/jwt": ["libs/jwt/src/index.ts"]
+      "@user-mgmt-engine/jwt": ["libs/jwt/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

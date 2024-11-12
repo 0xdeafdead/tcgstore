@@ -11,7 +11,7 @@ import { catchError, from, Observable, switchMap, throwError } from 'rxjs';
 import { genSalt, hash, compare } from 'bcryptjs';
 import { PrismaService } from '../../prisma-service/prisma.service';
 import { Prisma } from '@prisma/client';
-import { JWTService } from '@tcg-market-core/jwt';
+import { JWTService } from '@user-mgmt-engine/jwt';
 import { errorHandler } from '../../utils/errorHandler';
 
 @Injectable()

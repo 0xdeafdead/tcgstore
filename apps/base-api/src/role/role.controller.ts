@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 import { Role } from '@prisma/client';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
 import { CurrentUser } from '../decorators/current-user.decorator';
-import { BaseGuard } from '@tcg-market-core/jwt';
+import { BaseGuard } from '@user-mgmt-engine/jwt';
 import { GetRoleOptions } from './types';
 
 @Controller('role')

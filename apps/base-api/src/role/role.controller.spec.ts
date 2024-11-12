@@ -4,7 +4,7 @@ import { RoleController } from './role.controller';
 import { Role, RoleName } from '@prisma/client';
 import { of } from 'rxjs';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
-import { BaseGuard } from '@tcg-market-core/jwt';
+import { BaseGuard } from '@user-mgmt-engine/jwt';
 
 describe('RoleController', () => {
   let controller: RoleController;

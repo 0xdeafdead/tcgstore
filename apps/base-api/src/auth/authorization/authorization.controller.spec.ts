@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorizationController } from './authorization.controller';
 import { AuthorizationService } from './authorization.service';
-import { BaseGuard } from '@tcg-market-core/jwt';
+import { BaseGuard } from '@user-mgmt-engine/jwt';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
 import { RoleName } from '@prisma/client';
 import { of, throwError } from 'rxjs';

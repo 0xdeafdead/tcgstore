@@ -12,8 +12,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const port = process.env.PORT || 3000;
   const config = new DocumentBuilder()
-    .setTitle('TCGStore API')
-    .setDescription('This is the official TCGStore API')
+    .setTitle('User Management Engine API')
+    .setDescription('This is the official User Management Engine API')
     .setVersion('0.1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
