@@ -9,6 +9,6 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/auth',
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/libs/**/*.[tj]s'],
+  collectCoverageFrom: ['<rootDir>/src/**/*.[tj]s'],
   coverageReporters: ['lcov'],
 };
