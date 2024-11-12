@@ -23,7 +23,7 @@ jobs:
       - run: npm ci
       - run: npx nx affected --target=lint --parallel=5 --base=origin/staging
       - run: npx nx affected --target=build --parallel=5 --base=origin/staging
-      - run: npx nx affected --target=test --parallel=false --codeCoverage
+      - run: npx nx affected --target=test --parallel=false --codeCoverage --verbose
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
