@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Post, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Param,
+  Patch,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { Observable } from 'rxjs';
 import { User } from '@prisma/client';
@@ -11,6 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { GetUserOptions } from './types';
+import { UpdateUserDTO } from './DTOs/updateUser.dto';
 
 @ApiTags('User')
 @Controller('/user')
@@ -47,33 +56,44 @@ export class UserController {
     return this.service.getOneUser({ email }, options);
   }
 
-  @Post()
-  @ApiCreatedResponse({
-    description: 'Create single user.',
-    status: '2XX',
-  })
-  @ApiBody({
-    type: CreateUserDTO,
-    description: 'Input object for creating a user',
-  })
-  createUser(@Body() input: CreateUserDTO): Observable<User> {
-    return this.service.createUser(input);
-  }
-
-  @Delete('/:id')
+  @Patch('/:email')
   @ApiOkResponse({
-    description: 'Delete single user.',
+    description: 'Update single user.',
     status: '2XX',
   })
   @ApiParam({
     type: String,
-    name: 'id',
-    example: 'abcd1234-56ef-g7h8-ij90-1234abcd56ef',
-    description: 'The id of the user to delete',
+    name: 'email',
+    example: 'username@domain.xxx',
+    description: 'The email of the user to update',
     required: true,
     allowEmptyValue: false,
   })
-  deleteUser(@Param('id') id: string): Observable<boolean> {
-    return this.service.deleteUser(id);
+  @ApiBody({
+    type: UpdateUserDTO,
+    description: 'Input object for updating a user',
+  })
+  updateUser(
+    @Param('email') email: string,
+    @Body() input: UpdateUserDTO
+  ): Observable<User> {
+    return this.service.updateUser(email, input);
+  }
+
+  @Patch('/disable/:email')
+  @ApiOkResponse({
+    description: 'Disables a single user.',
+    status: '2XX',
+  })
+  @ApiParam({
+    type: String,
+    name: 'email',
+    example: 'name@domain.xxx',
+    description: 'The email of the user to disable',
+    required: true,
+    allowEmptyValue: false,
+  })
+  disableUser(@Param('email') email: string): Observable<User> {
+    return this.service.disableUser(email);
   }
 }

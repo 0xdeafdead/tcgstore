@@ -10,23 +10,26 @@ export class UserRespository {
 
   async all(options?: GetUserOptions) {
     const users = await this.prisma.user.findMany({
-      include: {
-        userRole: {
-          include: {
-            role: {
+      where: { disabled: false },
+      include: !options.permissions
+        ? {}
+        : {
+            userRole: {
               include: {
-                permissions: {
+                role: {
                   include: {
-                    permission: options.permissions
-                      ? { select: { id: true, name: true } }
-                      : false,
+                    permissions: {
+                      include: {
+                        permission: options.permissions
+                          ? { select: { id: true, name: true } }
+                          : false,
+                      },
+                    },
                   },
                 },
               },
             },
           },
-        },
-      },
     });
     return users;
   }
@@ -59,6 +62,7 @@ export class UserRespository {
               },
             },
           },
+          select: { role: true, roleId: true },
         },
       },
     });
@@ -66,24 +70,26 @@ export class UserRespository {
 
   async getOne(findBy: Prisma.UserWhereUniqueInput, options?: GetUserOptions) {
     const x = await this.prisma.user.findUnique({
-      where: findBy,
-      include: {
-        userRole: {
-          include: {
-            role: {
+      where: { ...findBy, disabled: false },
+      include: options.permissions
+        ? {
+            userRole: {
               include: {
-                permissions: {
+                role: {
                   include: {
-                    permission: options.permissions
-                      ? { select: { id: true, name: true } }
-                      : false,
+                    permissions: {
+                      include: {
+                        permission: options.permissions
+                          ? { select: { id: true, name: true } }
+                          : false,
+                      },
+                    },
                   },
                 },
               },
             },
-          },
-        },
-      },
+          }
+        : {},
     });
     return x;
   }
@@ -96,7 +102,10 @@ export class UserRespository {
     return this.prisma.user.update(input);
   }
 
-  async delete(input: Prisma.UserDeleteArgs): Promise<User> {
-    return this.prisma.user.delete(input);
+  async disable(email: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { email, disabled: false },
+      data: { disabled: true },
+    });
   }
 }

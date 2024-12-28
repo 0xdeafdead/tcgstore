@@ -15,6 +15,7 @@ import { CreateUserDTO } from './DTOs/createUser.dto';
 import { UserRespository } from './user.repository';
 import { GetUserOptions } from './types';
 import { RoleRepository } from '../role/role.repository';
+import { UpdateUserDTO } from './DTOs/updateUser.dto';
 
 @Injectable()
 export class UserService {
@@ -76,9 +77,19 @@ export class UserService {
     );
   }
 
-  deleteUser(id: string): Observable<boolean> {
-    return from(this.repository.delete({ where: { id } })).pipe(
-      map(() => true),
+  updateUser(email: string, input: UpdateUserDTO) {
+    return from(this.repository.update({ where: { email }, data: input })).pipe(
+      catchError((err) => {
+        this.logger.error(err.message);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  //TODO: when Redis implemented call getOne before
+  // modifiying the user
+  disableUser(email: string) {
+    return from(this.repository.disable(email)).pipe(
       catchError((err) => {
         this.logger.error(err.message);
         return throwError(() => err);

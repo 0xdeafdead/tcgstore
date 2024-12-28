@@ -6,7 +6,7 @@ import { SignInDTO } from '../DTOs/sigIn.dto';
 
 @Controller('authentication')
 export class AuthenticationController {
-  constructor(private readonly service: AuthenticationService) {}
+  constructor(private readonly service: AuthenticationService) { }
 
   @Post('/signUp')
   signUp(@Body() input: SignUpDTO): Observable<string> {

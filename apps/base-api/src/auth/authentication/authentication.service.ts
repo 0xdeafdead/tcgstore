@@ -4,15 +4,18 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { SignInDTO } from '../DTOs/sigIn.dto';
-import { UserService } from '../../user/user.service';
-import { SignUpDTO } from '../DTOs/signUp.dto';
-import { catchError, from, Observable, switchMap, throwError } from 'rxjs';
-import { genSalt, hash, compare } from 'bcryptjs';
-import { PrismaService } from '../../prisma-service/prisma.service';
-import { Prisma } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { Prisma, RoleName } from '@prisma/client';
 import { JWTService } from '@user-mgmt-engine/jwt';
+import { catchError, from, Observable, switchMap, throwError } from 'rxjs';
+
+import { SignInDTO } from '../DTOs/sigIn.dto';
+import { SignUpDTO } from '../DTOs/signUp.dto';
+import { genSalt, hash, compare } from 'bcryptjs';
+import { PrismaTransactionClient } from '../../types';
+import { UserService } from '../../user/user.service';
 import { errorHandler } from '../../utils/errorHandler';
+import { PrismaService } from '../../prisma-service/prisma.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -51,21 +54,22 @@ export class AuthenticationService {
           throw new NotFoundException(`User with email ${email} not found.`);
         }
         return this.jwtService.generateToken({
-          permissions: user.userRole.role.permissions.map(
-            (permission) => permission.permission.name
-          ),
           sub: user.email,
         });
       }),
       catchError((err) => {
-        const errMsg = `The user or password is wrong.`;
+        const errMsg = `The user or password is wrong`;
         this.logger.error(errMsg + ` Error: ${err.message}`);
         return throwError(() => errorHandler(err, errMsg));
       })
     );
   }
 
-  async storePassword(email: string, password: string): Promise<void> {
+  async storePassword(
+    email: string,
+    password: string,
+    tx?: PrismaTransactionClient
+  ): Promise<void> {
     try {
       const salt = await genSalt();
       const hashedPass = await hash(password, salt);
@@ -74,7 +78,8 @@ export class AuthenticationService {
         salt,
         password: hashedPass,
       };
-      await this.prisma.credential.create({ data: input });
+      (await tx?.credential.create({ data: input })) ??
+        this.prisma.credential.create({ data: input });
       return;
     } catch (err) {
       const errMsg = `Could not hash password for email ${email}.`;
@@ -87,19 +92,41 @@ export class AuthenticationService {
    * to make the singUp atomic
    */
   signUp(input: SignUpDTO): Observable<string> {
-    const { password, ...userCreationParams } = input;
-    return from(this.storePassword(userCreationParams.email, password)).pipe(
-      switchMap(() => this.userService.createUser(userCreationParams)),
-      switchMap((user) =>
-        this.jwtService.generateToken({
-          permissions: user.userRole.role.permissions.map(
-            (permission) => permission.permission.name
-          ),
+    const { password, email, firstName, lastName } = input;
+    return from(
+      this.prisma.$transaction(async (tx) => {
+        const role = await tx.role.findUnique({
+          where: {
+            role: RoleName.USER,
+          },
+        });
+        if (!role) {
+          throw new Error('Role not found');
+        }
+
+        const user = await tx.user.create({
+          data: {
+            id: uuidv4(),
+            email,
+            firstName,
+            lastName,
+            userRole: {
+              create: {
+                roleId: role.id,
+              },
+            },
+          },
+        });
+
+        await this.storePassword(email, password, tx);
+        const token = await this.jwtService.generateToken({
           sub: user.email,
-        })
-      ),
+        });
+        return token;
+      })
+    ).pipe(
       catchError((err) => {
-        const errMsg = `Could not create user for email ${userCreationParams.email}.`;
+        const errMsg = `Could not create user for email ${email}.`;
         this.logger.error(errMsg + ` Error: ${err.message}`);
         return throwError(() => errorHandler(err, errMsg));
       })

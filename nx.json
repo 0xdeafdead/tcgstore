@@ -60,5 +60,6 @@
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
     }
-  }
+  },
+  "useLegacyCache": true
 }

@@ -8,6 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 import { PermissionModule } from '../permission/permission.module';
 import { RoleModule } from '../role/role.module';
 import { JWTModule } from '@user-mgmt-engine/jwt';
+import { envs } from '../config';
 
 @Module({
   imports: [
@@ -17,12 +18,12 @@ import { JWTModule } from '@user-mgmt-engine/jwt';
     PermissionModule,
     RoleModule,
     JWTModule.forRootAsync({
-      secret: process.env.JWT_SECRET,
-      audience: [process.env.BASE_API_AUDIENCE],
-      issuer: process.env.BASE_API_ISSUER,
+      secret: envs.jwtSecret,
+      audience: [envs.audience],
+      issuer: envs.audience,
     }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

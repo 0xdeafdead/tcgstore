@@ -18,11 +18,11 @@ import { GetRoleOptions } from './types';
 
 @Controller('role')
 export class RoleController {
-  constructor(private readonly service: RoleService) {}
+  constructor(private readonly service: RoleService) { }
 
   @Get()
   @UseGuards(BaseGuard)
-  getAllRoles(@CurrentUser() user: string): Observable<Role[]> {
+  getAllRoles(): Observable<Role[]> {
     return this.service.getAllRoles();
   }
 
