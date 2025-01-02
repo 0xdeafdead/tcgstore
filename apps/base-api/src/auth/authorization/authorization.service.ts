@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma-service/prisma.service';
-import { getRoleId } from '../../utils/roles';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
 import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
 import { catchError, from, map, Observable, throwError } from 'rxjs';
 import { errorHandler } from '../../utils/errorHandler';
+import { PrismaTransactionClient } from '../../types';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthorizationService {
@@ -14,9 +15,9 @@ export class AuthorizationService {
   updateRoleToUser(input: UpdateUserRolesDTO): Observable<boolean> {
     return from(
       this.prisma.userRole.update({
-        where: { userId: input.id },
+        where: { userId: input.userId },
         data: {
-          roleId: getRoleId(input.newRole),
+          roleId: input.roleId,
           assignedAt: new Date(),
         },
       })
@@ -24,8 +25,7 @@ export class AuthorizationService {
       map(() => true),
       catchError((err) => {
         const errMsg = `Could not update user's role. Error:${err.message}`;
-        this.logger.error(errMsg);
-        return throwError(() => errorHandler(err, errMsg));
+        return throwError(() => errorHandler(this.logger, err, errMsg));
       })
     );
   }
@@ -33,32 +33,57 @@ export class AuthorizationService {
   updatePermissionsToRole(
     currentUser: string,
     input: UpdateRolePermissionsDTO
-  ): Observable<boolean> {
-    const addPermissionsBatch = this.prisma.rolePermission.createMany({
-      data: input.permissionsToAdd.map((id) => ({
-        permissionId: id,
-        assignedBy: currentUser,
-        roleId: getRoleId(input.role),
-        assignedAt: new Date(),
-      })),
-      skipDuplicates: true,
-    });
-    const removePermissionsBatch = this.prisma.rolePermission.deleteMany({
-      where: {
-        permissionId: {
-          in: input.permissionsToRemove,
+  ): Observable<Role> {
+    const addPermissionsBatch = (roleId: string, tx: PrismaTransactionClient) =>
+      tx.rolePermission.createMany({
+        data: input.permissionsToAdd.map((id) => ({
+          permissionId: id,
+          assignedBy: currentUser,
+          roleId,
+          assignedAt: new Date(),
+        })),
+        skipDuplicates: true,
+      });
+    const removePermissionsBatch = (
+      roleId: string,
+      tx: PrismaTransactionClient
+    ) =>
+      tx.rolePermission.deleteMany({
+        where: {
+          permissionId: {
+            in: input.permissionsToRemove,
+          },
+          roleId,
         },
-        roleId: getRoleId(input.role),
-      },
-    });
+      });
     return from(
-      this.prisma.$transaction([addPermissionsBatch, removePermissionsBatch])
+      this.prisma.$transaction(async (tx) => {
+        const role = await tx.role.findUniqueOrThrow({
+          where: { id: input.roleId },
+        });
+        await addPermissionsBatch(role.id, tx);
+        await removePermissionsBatch(role.id, tx);
+        return await tx.role.findUniqueOrThrow({
+          where: { id: role.id },
+          include: {
+            permissions: {
+              include: {
+                permission: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
     ).pipe(
-      map(() => true),
+      map((role) => role),
       catchError((err) => {
         const errMsg = `Could not update role's permissions. Error:${err.message}`;
-        this.logger.error(errMsg);
-        return throwError(() => errorHandler(err, errMsg));
+        return throwError(() => errorHandler(this.logger, err, errMsg));
       })
     );
   }

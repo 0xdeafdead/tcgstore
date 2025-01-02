@@ -1,7 +1,7 @@
-import { RoleName } from '@prisma/client';
 import {
   IsArray,
   IsEnum,
+  IsOptional,
   IsString,
   IsUUID,
   Matches,
@@ -14,10 +14,8 @@ export class CreateRoleDTO {
   @Matches(/\w/)
   name: string;
 
-  @IsEnum(RoleName)
-  role: RoleName = RoleName.USER;
-
   @IsArray()
+  @IsOptional()
   @IsUUID('4', { each: true })
-  permissionIds: string[];
+  permissionIds?: string[] = [];
 }

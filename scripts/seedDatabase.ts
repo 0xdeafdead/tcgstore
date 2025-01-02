@@ -1,6 +1,6 @@
 // seeds/roles.seed.ts
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaClient, RoleName } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import dayjs from 'dayjs';
 
 const prisma = new PrismaClient();
@@ -53,7 +53,6 @@ async function main() {
     {
       id: userRoleId,
       name: 'User',
-      role: RoleName.USER,
       permissions: userPermissions.map((permission) => ({
         assignedBy: 'system',
         assignedAt: dayjs().toDate(),
@@ -63,7 +62,6 @@ async function main() {
     {
       id: adminRoleId,
       name: 'Admin',
-      role: RoleName.ADMIN,
       permissions: adminPermissions.map((permission) => ({
         assignedBy: 'system',
         assignedAt: dayjs().toDate(),
@@ -73,7 +71,6 @@ async function main() {
     {
       id: devRoleId,
       name: 'Dev',
-      role: RoleName.DEV,
       permissions: permissions.map((permission) => ({
         assignedBy: 'system',
         assignedAt: dayjs().toDate(),
@@ -84,7 +81,7 @@ async function main() {
 
   for (const role of roles) {
     await prisma.role.upsert({
-      where: { role: role.role },
+      where: { id: role.id },
       update: {},
       create: {
         ...role,

@@ -61,9 +61,13 @@ export class JWTService {
   async verifyToken(
     token: string,
     options?: JWTVerifyOptions
-  ): Promise<JWTPayload | null> {
+  ): Promise<JWTPayload> {
     try {
-      const { payload } = await jwtVerify(token, this.secret, options);
+      const { payload } = await jwtVerify<{ sub: string; role: string }>(
+        token,
+        this.secret,
+        options
+      );
       return payload;
     } catch (err: any) {
       if (err.code === 'ERR_JWT_EXPIRED') {

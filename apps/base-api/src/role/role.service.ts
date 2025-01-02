@@ -14,6 +14,8 @@ import {
 import { RoleRepository } from './role.repository';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
 import { GetRoleOptions } from './types';
+import { errorHandler } from '../utils/errorHandler';
+import { UpdateRoleDTO } from './DTOs/updateRole.dto';
 
 @Injectable()
 export class RoleService {
@@ -24,7 +26,9 @@ export class RoleService {
     return from(this.repository.all()).pipe(
       catchError((err) => {
         this.logger.error(err.message);
-        return throwError(() => err);
+        return throwError(() =>
+          errorHandler(this.logger, err, 'Could not fetch all roles.')
+        );
       })
     );
   }
@@ -42,19 +46,20 @@ export class RoleService {
         }
       }),
       catchError((err) => {
-        this.logger.error(err.message);
-        return throwError(() => err);
+        return throwError(() =>
+          errorHandler(this.logger, err, 'Could not find role.')
+        );
       })
     );
   }
 
-  createRole(input: CreateRoleDTO): Observable<Role> {
+  createRole(input: CreateRoleDTO, currentUser: string): Observable<Role> {
     const { permissionIds, ...restInput } = input;
     const newRoleId = uuidv4();
     const permissionsToAdd: Prisma.RolePermissionCreateManyRoleInput[] =
       permissionIds.map<Prisma.RolePermissionCreateManyRoleInput>((id) => ({
         permissionId: id,
-        assignedBy: '',
+        assignedBy: currentUser,
       }));
     return from(
       this.repository.create({
@@ -66,20 +71,23 @@ export class RoleService {
       })
     ).pipe(
       catchError((err) => {
-        this.logger.error(err.message);
-        return throwError(() => err);
+        return throwError(() =>
+          errorHandler(this.logger, err, 'Could not create role.')
+        );
       })
     );
   }
 
-  updateRole(id: string): Observable<Role> {
-    const input: Prisma.RoleUpdateInput = {
-      //This is intentional
+  updateRole(id: string, input: UpdateRoleDTO): Observable<Role> {
+    const data: Prisma.RoleUpdateInput = {
+      ...input,
     };
-    return from(this.repository.update({ data: input, where: { id } })).pipe(
+    return from(this.repository.update({ data, where: { id } })).pipe(
       catchError((err) => {
         this.logger.error(err.message);
-        return throwError(() => err);
+        return throwError(() =>
+          errorHandler(this.logger, err, 'Could not update role.')
+        );
       })
     );
   }
@@ -89,7 +97,9 @@ export class RoleService {
       map(() => true),
       catchError((err) => {
         this.logger.error(err.message);
-        return throwError(() => err);
+        return throwError(() =>
+          errorHandler(this.logger, err, 'Could not delete role.')
+        );
       })
     );
   }

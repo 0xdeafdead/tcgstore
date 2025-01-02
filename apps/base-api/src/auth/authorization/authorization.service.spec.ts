@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorizationService } from './authorization.service';
-import { PrismaClient, RoleName } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { PrismaService } from '../../prisma-service/prisma.service';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
@@ -36,8 +36,8 @@ describe('AuthorizationService', () => {
 
   describe('updateRoleToUser', () => {
     const input: UpdateUserRolesDTO = {
-      id: 'user_01',
-      newRole: RoleName.ADMIN,
+      userId: 'user_01',
+      roleId: 'role_01',
     };
     it('should return true if the user role was updated', (done) => {
       prismaMock.userRole.update.mockResolvedValue({
@@ -71,7 +71,7 @@ describe('AuthorizationService', () => {
 
   describe('updatePermissionsToRole', () => {
     const input: UpdateRolePermissionsDTO = {
-      role: RoleName.ADMIN,
+      roleId: 'role_01',
       permissionsToAdd: ['permission_01'],
       permissionsToRemove: ['permission_02'],
     };
