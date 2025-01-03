@@ -6,8 +6,10 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoleService } from './role.service';
 import { RoleRepository } from './role.repository';
-import { Role, RoleName } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
+import { CurrentUserPayload } from '../types';
+import { UpdateRoleDTO } from './DTOs/updateRole.dto';
 
 const fakeUUUID = 'abcd1234-abcd-1234-defg-56789-56789defg';
 jest.mock('uuid', () => {
@@ -22,12 +24,10 @@ describe('RoleService', () => {
     {
       id: 'role_01',
       name: 'roleOne',
-      role: RoleName.USER,
     },
     {
       id: 'role_02',
       name: 'roleTwo',
-      role: RoleName.USER,
     },
   ];
 
@@ -133,13 +133,17 @@ describe('RoleService', () => {
     const inputTemplate: CreateRoleDTO = {
       name: 'roleThree',
       permissionIds: ['permission_01', 'permission_02'],
-      role: RoleName.ADMIN,
+    };
+
+    const currentUser: CurrentUserPayload = {
+      role: 'role_01',
+      sub: 'testing@test.com',
     };
 
     it('should return an InternalServerException if repository fails', (done) => {
       const testError = new InternalServerErrorException();
       mockRepository.create.mockRejectedValueOnce(testError);
-      service.createRole(inputTemplate).subscribe({
+      service.createRole(inputTemplate, currentUser.sub).subscribe({
         error: (err) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);
@@ -150,7 +154,7 @@ describe('RoleService', () => {
 
     it('should return an role ', (done) => {
       mockRepository.create.mockResolvedValueOnce(mockRoles[0]);
-      service.createRole(inputTemplate).subscribe({
+      service.createRole(inputTemplate, currentUser.sub).subscribe({
         next: (res) => {
           expect(mockRepository.create).toHaveBeenCalledTimes(1);
           expect(res).toMatchObject(mockRoles[0]);
@@ -162,9 +166,12 @@ describe('RoleService', () => {
 
   describe('updateRole', () => {
     const id = 'role_01';
+    const updateRoleInput: UpdateRoleDTO = {
+      name: 'newRoleName',
+    };
     it('should return the updated role', (done) => {
       mockRepository.update.mockResolvedValueOnce(mockRoles[0]);
-      service.updateRole(id).subscribe({
+      service.updateRole(id, updateRoleInput).subscribe({
         next: (res) => {
           expect(mockRepository.update).toHaveBeenCalledTimes(1);
           expect(res).toMatchObject(mockRoles[0]);
@@ -177,7 +184,7 @@ describe('RoleService', () => {
       mockRepository.update.mockRejectedValueOnce(
         new InternalServerErrorException()
       );
-      service.updateRole(id).subscribe({
+      service.updateRole(id, updateRoleInput).subscribe({
         error: (err) => {
           expect(mockRepository.update).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);

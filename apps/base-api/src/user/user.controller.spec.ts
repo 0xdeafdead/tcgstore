@@ -2,8 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { CreateUserDTO } from './DTOs/createUser.dto';
+import { UpdateUserDTO } from './DTOs/updateUser.dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -18,6 +20,7 @@ describe('UserController', () => {
       updatedAt: now,
       firstName: 'testName',
       lastName: 'testLastName',
+      disabled: false,
     },
     {
       id: 'user_02',
@@ -26,14 +29,15 @@ describe('UserController', () => {
       updatedAt: now,
       firstName: 'testName2',
       lastName: 'testLastName2',
+      disabled: false,
     },
   ];
 
   const serviceMock = {
     getAllUsers: jest.fn(),
     getOneUser: jest.fn(),
-    createUser: jest.fn(),
-    deleteUser: jest.fn(),
+    updateUser: jest.fn(),
+    disableUser: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -84,18 +88,26 @@ describe('UserController', () => {
     });
   });
 
-  describe('createUser', () => {
-    const input: CreateUserDTO = {
-      email: 'user01@test.com',
+  describe('updateUser', () => {
+    const email: string = 'user_01@test.com';
+    const updateUserDTO: UpdateUserDTO = {
       firstName: 'testName',
       lastName: 'testLastName',
     };
-    it('should return the user created', (done) => {
-      serviceMock.createUser.mockReturnValueOnce(of(mockUsers[0]));
-      controller.createUser(input).subscribe({
-        next: (res) => {
-          expect(serviceMock.createUser).toHaveBeenCalled();
-          expect(res).toMatchObject(mockUsers[0]);
+    it('should return an error if user is not found', (done) => {
+      serviceMock.updateUser.mockReturnValueOnce(
+        throwError(
+          () => new NotFoundException(`Not found user with email ${email}`)
+        )
+      );
+      controller.updateUser(email, updateUserDTO).subscribe({
+        error: (err) => {
+          expect(serviceMock.updateUser).toHaveBeenCalled();
+          expect(serviceMock.updateUser).toHaveBeenCalledWith(
+            email,
+            updateUserDTO
+          );
+          expect(err).toBeInstanceOf(NotFoundException);
           done();
         },
       });
@@ -104,12 +116,12 @@ describe('UserController', () => {
 
   describe('deleteUser', () => {
     const id = 'user_01';
-    it('should return a boolean when a user is deleted', (done) => {
-      serviceMock.deleteUser.mockReturnValueOnce(of(false));
-      controller.deleteUser(id).subscribe({
+    it('should return a disabled user when a user is deleted', (done) => {
+      serviceMock.disableUser.mockReturnValueOnce(of({ disabled: true }));
+      controller.disableUser(id).subscribe({
         next: (res) => {
-          expect(serviceMock.deleteUser).toHaveBeenCalled();
-          expect(res).toBeFalsy();
+          expect(serviceMock.disableUser).toHaveBeenCalled();
+          expect(res.disabled).toBeTruthy();
           done();
         },
       });

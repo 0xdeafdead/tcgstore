@@ -75,49 +75,183 @@ describe('AuthorizationService', () => {
       permissionsToAdd: ['permission_01'],
       permissionsToRemove: ['permission_02'],
     };
-    it('should return true if the permissions were updated', (done) => {
-      prismaMock.rolePermission.createMany.mockResolvedValue({
+    it('should return the role if the permissions were updated', (done) => {
+      const fakeRole = {
+        id: 'role_01',
+        name: 'user',
+      };
+      prismaMock.rolePermission.createMany.mockResolvedValueOnce({
         count: 1,
       });
-      prismaMock.rolePermission.deleteMany.mockResolvedValue({
+      prismaMock.rolePermission.deleteMany.mockResolvedValueOnce({
         count: 1,
       });
 
-      prismaMock.$transaction.mockResolvedValue([
-        {
-          count: 1,
-        },
-        {
-          count: 1,
-        },
-      ]);
+      prismaMock.role.findUniqueOrThrow
+        .mockResolvedValueOnce(fakeRole)
+        .mockResolvedValueOnce(fakeRole);
+
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
       service.updatePermissionsToRole('user_01', input).subscribe({
         next: (result) => {
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
           expect(prismaMock.rolePermission.createMany).toHaveBeenCalledTimes(1);
           expect(prismaMock.rolePermission.deleteMany).toHaveBeenCalledTimes(1);
-          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
-          expect(result).toBe(true);
+          expect(prismaMock.role.findUniqueOrThrow).toHaveBeenCalledTimes(2);
+          expect(result).toBe(fakeRole);
           done();
         },
       });
     });
 
-    it('should return an error if not possible to add new permissions', (done) => {
+    it('should return an error if role was not found', (done) => {
+      const fakeRole = {
+        id: 'role_01',
+        name: 'user',
+      };
+      prismaMock.rolePermission.createMany.mockResolvedValueOnce({
+        count: 1,
+      });
+      prismaMock.rolePermission.deleteMany.mockResolvedValueOnce({
+        count: 1,
+      });
+
+      prismaMock.role.findUniqueOrThrow.mockRejectedValueOnce(
+        new Error('Could not find role')
+      );
+
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
+      service.updatePermissionsToRole('user_01', input).subscribe({
+        error: (err) => {
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.rolePermission.createMany).toHaveBeenCalledTimes(0);
+          expect(prismaMock.rolePermission.deleteMany).toHaveBeenCalledTimes(0);
+          expect(prismaMock.role.findUniqueOrThrow).toHaveBeenCalledTimes(1);
+          expect(err).toBeInstanceOf(InternalServerErrorException);
+          done();
+        },
+      });
+    });
+    it('should return an error if not all permissions were added', (done) => {
+      const fakeRole = {
+        id: 'role_01',
+        name: 'user',
+      };
       prismaMock.rolePermission.createMany.mockResolvedValueOnce({
         count: 0,
       });
+      prismaMock.rolePermission.deleteMany.mockResolvedValueOnce({
+        count: 1,
+      });
 
+      prismaMock.role.findUniqueOrThrow
+        .mockResolvedValueOnce(fakeRole)
+        .mockResolvedValueOnce(fakeRole);
+
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
+      service.updatePermissionsToRole('user_01', input).subscribe({
+        error: (err) => {
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.rolePermission.createMany).toHaveBeenCalledTimes(1);
+          expect(prismaMock.rolePermission.deleteMany).toHaveBeenCalledTimes(0);
+          expect(prismaMock.role.findUniqueOrThrow).toHaveBeenCalledTimes(1);
+          expect(err).toBeInstanceOf(InternalServerErrorException);
+          done();
+        },
+      });
+    });
+    it('should return an error if there was an error addind permissions', (done) => {
+      const fakeRole = {
+        id: 'role_01',
+        name: 'user',
+      };
+      prismaMock.rolePermission.createMany.mockRejectedValueOnce(
+        new Error('Failed to add permissions')
+      );
+      prismaMock.rolePermission.deleteMany.mockResolvedValueOnce({
+        count: 1,
+      });
+
+      prismaMock.role.findUniqueOrThrow
+        .mockResolvedValueOnce(fakeRole)
+        .mockResolvedValueOnce(fakeRole);
+
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
+      service.updatePermissionsToRole('user_01', input).subscribe({
+        error: (err) => {
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.rolePermission.createMany).toHaveBeenCalledTimes(1);
+          expect(prismaMock.rolePermission.deleteMany).toHaveBeenCalledTimes(0);
+          expect(prismaMock.role.findUniqueOrThrow).toHaveBeenCalledTimes(1);
+          expect(err).toBeInstanceOf(InternalServerErrorException);
+          done();
+        },
+      });
+    });
+    it('should return an error if not all permissions were removed', (done) => {
+      const fakeRole = {
+        id: 'role_01',
+        name: 'user',
+      };
+      prismaMock.rolePermission.createMany.mockResolvedValueOnce({
+        count: 1,
+      });
       prismaMock.rolePermission.deleteMany.mockResolvedValueOnce({
         count: 0,
       });
-      prismaMock.$transaction.mockRejectedValueOnce({
-        message: 'Could not update permissions',
-      });
+
+      prismaMock.role.findUniqueOrThrow
+        .mockResolvedValueOnce(fakeRole)
+        .mockResolvedValueOnce(fakeRole);
+
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
       service.updatePermissionsToRole('user_01', input).subscribe({
         error: (err) => {
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
           expect(prismaMock.rolePermission.createMany).toHaveBeenCalledTimes(1);
           expect(prismaMock.rolePermission.deleteMany).toHaveBeenCalledTimes(1);
+          expect(prismaMock.role.findUniqueOrThrow).toHaveBeenCalledTimes(1);
+          expect(err).toBeInstanceOf(InternalServerErrorException);
+          done();
+        },
+      });
+    });
+
+    it('should return an error if not all permissions were removed', (done) => {
+      const fakeRole = {
+        id: 'role_01',
+        name: 'user',
+      };
+      prismaMock.rolePermission.createMany.mockResolvedValueOnce({
+        count: 1,
+      });
+      prismaMock.rolePermission.deleteMany.mockRejectedValueOnce(
+        new Error('Failed to remove permissions')
+      );
+
+      prismaMock.role.findUniqueOrThrow
+        .mockResolvedValueOnce(fakeRole)
+        .mockResolvedValueOnce(fakeRole);
+
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
+      service.updatePermissionsToRole('user_01', input).subscribe({
+        error: (err) => {
           expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.rolePermission.createMany).toHaveBeenCalledTimes(1);
+          expect(prismaMock.rolePermission.deleteMany).toHaveBeenCalledTimes(1);
+          expect(prismaMock.role.findUniqueOrThrow).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
         },

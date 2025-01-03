@@ -80,7 +80,7 @@ export class AuthenticationService {
         password: hashedPass,
       };
       (await tx?.credential.create({ data: input })) ??
-        this.prisma.credential.create({ data: input });
+        (await this.prisma.credential.create({ data: input }));
       return;
     } catch (err) {
       const errMsg = `Could not hash password for email ${email}.`;

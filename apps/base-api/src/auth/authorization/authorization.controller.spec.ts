@@ -1,12 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorizationController } from './authorization.controller';
 import { AuthorizationService } from './authorization.service';
-import { BaseGuard } from '@user-mgmt-engine/jwt';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
-import { RoleName } from '@prisma/client';
 import { of, throwError } from 'rxjs';
 import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
 import { HttpException } from '@nestjs/common';
+import { BaseGuard } from '../../guards';
 
 describe('AuthorizationController', () => {
   let controller: AuthorizationController;
@@ -43,8 +42,8 @@ describe('AuthorizationController', () => {
   describe('updateUserRole', () => {
     it('should return boolean when update user role', (done) => {
       const input: UpdateUserRolesDTO = {
-        id: 'user_01',
-        newRole: RoleName.DEV,
+        userId: 'user_01',
+        roleId: 'role_01',
       };
       mockService.updateRoleToUser.mockReturnValueOnce(of(true));
       controller.updateUserRole(input).subscribe({
@@ -58,8 +57,8 @@ describe('AuthorizationController', () => {
 
     it('should return error when unable to update user role', (done) => {
       const input: UpdateUserRolesDTO = {
-        id: 'user_01',
-        newRole: RoleName.DEV,
+        userId: 'user_01',
+        roleId: 'role_01',
       };
       mockService.updateRoleToUser.mockReturnValueOnce(
         throwError(() => new HttpException('error', 500))
@@ -77,7 +76,7 @@ describe('AuthorizationController', () => {
   describe('updaeRolePermissions', () => {
     it('should return boolean when update role permissions', (done) => {
       const input: UpdateRolePermissionsDTO = {
-        role: RoleName.DEV,
+        roleId: 'role_01',
         permissionsToAdd: [],
         permissionsToRemove: [],
       };
@@ -96,7 +95,7 @@ describe('AuthorizationController', () => {
 
     it('should return error when unable to update role permissions', (done) => {
       const input: UpdateRolePermissionsDTO = {
-        role: RoleName.DEV,
+        roleId: 'role_01',
         permissionsToAdd: [],
         permissionsToRemove: [],
       };

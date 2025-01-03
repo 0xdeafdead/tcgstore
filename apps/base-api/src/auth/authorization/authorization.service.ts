@@ -61,8 +61,14 @@ export class AuthorizationService {
         const role = await tx.role.findUniqueOrThrow({
           where: { id: input.roleId },
         });
-        await addPermissionsBatch(role.id, tx);
-        await removePermissionsBatch(role.id, tx);
+        const addedRoles = await addPermissionsBatch(role.id, tx);
+        if (addedRoles.count < input.permissionsToAdd.length) {
+          throw new Error('Not all permissions were added');
+        }
+        const removedRoles = await removePermissionsBatch(role.id, tx);
+        if (removedRoles.count < input.permissionsToRemove.length) {
+          throw new Error('Not all permissions were removed');
+        }
         return await tx.role.findUniqueOrThrow({
           where: { id: role.id },
           include: {

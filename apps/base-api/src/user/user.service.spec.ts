@@ -46,7 +46,7 @@ describe('UserService', () => {
     all: jest.fn(),
     getOne: jest.fn(),
     create: jest.fn(),
-    delete: jest.fn(),
+    disable: jest.fn(),
   };
 
   const roleRepositoryMock = {
@@ -183,26 +183,29 @@ describe('UserService', () => {
     });
   });
 
-  describe('deleteUser', () => {
+  describe('disableUser', () => {
     const id = 'user_01';
     it('should return an error when deletion fails', (done) => {
-      mockRepository.delete.mockRejectedValueOnce(
+      mockRepository.disable.mockRejectedValueOnce(
         new InternalServerErrorException()
       );
       service.disableUser(id).subscribe({
         error: (err) => {
-          expect(mockRepository.delete).toHaveBeenCalledTimes(1);
+          expect(mockRepository.disable).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);
           done();
         },
       });
     });
 
-    it('should return an error when deletion fails', (done) => {
-      mockRepository.delete.mockResolvedValueOnce(mockUsers[0]);
+    it('should return the user with disabled true', (done) => {
+      mockRepository.disable.mockResolvedValueOnce({
+        ...mockUsers[0],
+        disabled: true,
+      });
       service.disableUser(id).subscribe({
         next: (res) => {
-          expect(mockRepository.delete).toHaveBeenCalledTimes(1);
+          expect(mockRepository.disable).toHaveBeenCalledTimes(1);
           expect(res.disabled).toBeTruthy();
           done();
         },
