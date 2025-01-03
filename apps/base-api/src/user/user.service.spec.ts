@@ -29,6 +29,7 @@ describe('UserService', () => {
       updatedAt: now,
       firstName: 'testName',
       lastName: 'testLastName',
+      disabled: false,
     },
     {
       id: 'user_02',
@@ -37,6 +38,7 @@ describe('UserService', () => {
       updatedAt: now,
       firstName: 'testName2',
       lastName: 'testLastName2',
+      disabled: false,
     },
   ];
 
@@ -150,6 +152,7 @@ describe('UserService', () => {
       firstName: 'testName',
       lastName: 'testLastName',
       email: 'user01@test.com',
+      roleId: 'role_01',
     };
 
     it('should return an InternalServerException if repository fails', (done) => {
@@ -186,7 +189,7 @@ describe('UserService', () => {
       mockRepository.delete.mockRejectedValueOnce(
         new InternalServerErrorException()
       );
-      service.deleteUser(id).subscribe({
+      service.disableUser(id).subscribe({
         error: (err) => {
           expect(mockRepository.delete).toHaveBeenCalledTimes(1);
           expect(err).toBeInstanceOf(InternalServerErrorException);
@@ -197,10 +200,10 @@ describe('UserService', () => {
 
     it('should return an error when deletion fails', (done) => {
       mockRepository.delete.mockResolvedValueOnce(mockUsers[0]);
-      service.deleteUser(id).subscribe({
+      service.disableUser(id).subscribe({
         next: (res) => {
           expect(mockRepository.delete).toHaveBeenCalledTimes(1);
-          expect(res).toBeTruthy();
+          expect(res.disabled).toBeTruthy();
           done();
         },
       });

@@ -1,13 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  Observable,
-  catchError,
-  from,
-  map,
-  of,
-  switchMap,
-  throwError,
-} from 'rxjs';
+import { catchError, from, of, switchMap, throwError } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Prisma } from '@prisma/client';
 

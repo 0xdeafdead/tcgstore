@@ -85,9 +85,7 @@ describe('AuthenticationService', () => {
         salt: '',
       });
 
-      const spyCompare = jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementationOnce(() => true);
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => true);
 
       service.verifyPassword(email, password).then((result) => {
         expect(prismaMock.credential.findUniqueOrThrow).toHaveBeenCalledTimes(
@@ -105,9 +103,7 @@ describe('AuthenticationService', () => {
         salt: '',
       });
 
-      const spyCompare = jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementationOnce(() => false);
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => false);
 
       service.verifyPassword(email, password).then((result) => {
         expect(prismaMock.credential.findUniqueOrThrow).toHaveBeenCalledTimes(

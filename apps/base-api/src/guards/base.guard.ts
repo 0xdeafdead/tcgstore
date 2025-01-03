@@ -7,8 +7,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JWTService } from '../../../libs/jwt/src/lib/jwt.service';
-import { envs } from '../src/config';
+import { JWTService } from '@user-mgmt-engine/jwt';
+import { envs } from '../config';
 
 @Injectable()
 export class BaseGuard implements CanActivate {

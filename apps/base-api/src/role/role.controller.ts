@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 import { Role } from '@prisma/client';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
 import { CurrentUser } from '../decorators/current-user.decorator';
-import { BaseGuard } from '@user-mgmt-engine/jwt';
+import { BaseGuard } from '../guards';
 import { GetRoleOptions } from './types';
 import { CurrentUserPayload } from '../types';
 import { UpdateRoleDTO } from './DTOs/updateRole.dto';

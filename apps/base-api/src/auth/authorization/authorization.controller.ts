@@ -3,9 +3,9 @@ import { AuthorizationService } from './authorization.service';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
 import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
 import { CurrentUser } from '../../decorators/current-user.decorator';
-import { BaseGuard } from '@user-mgmt-engine/jwt';
 import { Observable } from 'rxjs';
 import { Role } from '@prisma/client';
+import { BaseGuard } from '../../guards';
 
 @Controller('authorization')
 export class AuthorizationController {
