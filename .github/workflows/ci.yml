@@ -21,6 +21,7 @@ jobs:
         with:
           node-version: lts/iron
       - run: npm ci
+      - run: npx prisma generate --schema=apps/base-api/prisma/schema.prisma
       - run: npx nx run-many --target=lint --parallel=5 --base=origin/staging --verbose
       - run: npx nx run-many --target=build --parallel=5 --base=origin/staging --verbose
       - run: npx nx run-many --target=test --parallel=false --codeCoverage --verbose
