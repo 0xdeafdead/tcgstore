@@ -85,9 +85,7 @@ describe('AuthenticationService', () => {
         salt: '',
       });
 
-      const spyCompare = jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementationOnce(() => true);
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => true);
 
       service.verifyPassword(email, password).then((result) => {
         expect(prismaMock.credential.findUniqueOrThrow).toHaveBeenCalledTimes(
@@ -105,9 +103,7 @@ describe('AuthenticationService', () => {
         salt: '',
       });
 
-      const spyCompare = jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementationOnce(() => false);
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => false);
 
       service.verifyPassword(email, password).then((result) => {
         expect(prismaMock.credential.findUniqueOrThrow).toHaveBeenCalledTimes(
@@ -232,13 +228,20 @@ describe('AuthenticationService', () => {
       lastName: 'test',
     };
 
-    it('should return an error if unable to store password', (done) => {
-      const storeSpy = jest
-        .spyOn(service, 'storePassword')
-        .mockRejectedValueOnce(new Error());
+    it('should return an error if unable to find role', (done) => {
+      const storeSpy = jest.spyOn(service, 'storePassword');
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
+      prismaMock.role.findUnique.mockRejectedValueOnce(
+        new Error('Role not found')
+      );
       service.signUp(input).subscribe({
         error: (err) => {
-          expect(storeSpy).toHaveBeenCalledTimes(1);
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.role.findUnique).toHaveBeenCalledTimes(1);
+          expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+          expect(storeSpy).toHaveBeenCalledTimes(0);
           expect(err).toBeInstanceOf(InternalServerErrorException);
           expect(err.message).toBe(
             'Could not create user for email testing@test.com.'
@@ -249,14 +252,28 @@ describe('AuthenticationService', () => {
     });
 
     it('should return an error if unable to create user', (done) => {
-      const storeSpy = jest.spyOn(service, 'storePassword').mockResolvedValue();
-      userServiceMock.createUser.mockReturnValueOnce(
-        throwError(() => new Error())
+      const storeSpy = jest.spyOn(service, 'storePassword');
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
       );
+      prismaMock.role.findUnique.mockResolvedValueOnce({
+        id: 'role_01',
+        name: 'user',
+      });
+      prismaMock.user.create.mockRejectedValueOnce(
+        new Error('Failed to create user')
+      );
+      prismaMock.credential.create.mockResolvedValueOnce({
+        email: input.email,
+        salt: '',
+        password: '',
+      });
       service.signUp(input).subscribe({
         error: (err) => {
-          expect(storeSpy).toHaveBeenCalledTimes(1);
-          expect(userServiceMock.createUser).toHaveBeenCalledTimes(1);
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.role.findUnique).toHaveBeenCalledTimes(1);
+          expect(prismaMock.user.create).toHaveBeenCalledTimes(1);
+          expect(storeSpy).toHaveBeenCalledTimes(0);
           expect(err).toBeInstanceOf(InternalServerErrorException);
           expect(err.message).toBe(
             'Could not create user for email testing@test.com.'
@@ -266,28 +283,85 @@ describe('AuthenticationService', () => {
       });
     });
 
-    it('should return  if the user was successfully created', (done) => {
-      const storeSpy = jest.spyOn(service, 'storePassword').mockResolvedValue();
-      userServiceMock.createUser.mockReturnValueOnce(
-        of({
-          email: input.email,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          userRole: {
-            role: {
-              permissions: [
-                { permission: { name: 'perm01' } },
-                { permission: { name: 'perm02' } },
-              ],
-            },
-          },
-        })
+    it('should return an error if unable to store password', (done) => {
+      const storeSpy = jest.spyOn(service, 'storePassword');
+      // .mockRejectedValueOnce(new Error('Could not store password'));
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
       );
+      prismaMock.role.findUnique.mockResolvedValueOnce({
+        id: 'role_01',
+        name: 'user',
+      });
+      prismaMock.user.create.mockResolvedValueOnce({
+        id: '',
+        email: input.email,
+        firstName: input.firstName,
+        lastName: input.lastName,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        disabled: false,
+      });
+      prismaMock.credential.create.mockRejectedValueOnce(
+        new Error('Could not store password')
+      );
+      service.signUp(input).subscribe({
+        error: (err) => {
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.role.findUnique).toHaveBeenCalledTimes(1);
+          expect(prismaMock.user.create).toHaveBeenCalledTimes(1);
+          expect(storeSpy).toHaveBeenCalledTimes(1);
+          expect(storeSpy).toHaveBeenCalledWith(
+            input.email,
+            input.password,
+            prismaMock
+          );
+          expect(prismaMock.credential.create).toHaveBeenCalledTimes(1);
+          expect(err).toBeInstanceOf(InternalServerErrorException);
+          expect(err.message).toBe(
+            'Could not create user for email testing@test.com.'
+          );
+          done();
+        },
+      });
+    });
+
+    it('should return the token if the transaction was successfull', (done) => {
+      prismaMock.$transaction.mockImplementationOnce((callback) =>
+        callback(prismaMock)
+      );
+      prismaMock.role.findUnique.mockResolvedValueOnce({
+        id: 'role_01',
+        name: 'user',
+      });
+      prismaMock.user.create.mockResolvedValueOnce({
+        id: '',
+        email: input.email,
+        firstName: input.firstName,
+        lastName: input.lastName,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        disabled: false,
+      });
+      prismaMock.credential.create.mockResolvedValueOnce({
+        email: input.email,
+        salt: '',
+        password: '',
+      });
+      const storeSpy = jest.spyOn(service, 'storePassword'); //.mockResolvedValue();
       jwtServiceMock.generateToken.mockResolvedValueOnce('token');
       service.signUp(input).subscribe({
         next: (res) => {
+          expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+          expect(prismaMock.role.findUnique).toHaveBeenCalledTimes(1);
+          expect(prismaMock.user.create).toHaveBeenCalledTimes(1);
+          expect(prismaMock.credential.create).toHaveBeenCalledTimes(1);
           expect(storeSpy).toHaveBeenCalledTimes(1);
-          expect(userServiceMock.createUser).toHaveBeenCalledTimes(1);
+          expect(storeSpy).toHaveBeenCalledWith(
+            input.email,
+            input.password,
+            prismaMock
+          );
           expect(jwtServiceMock.generateToken).toHaveBeenCalledTimes(1);
           expect(res).toMatch('token');
           done();

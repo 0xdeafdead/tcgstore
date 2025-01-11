@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoleService } from './role.service';
 import { RoleController } from './role.controller';
-import { Role, RoleName } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { of } from 'rxjs';
 import { CreateRoleDTO } from './DTOs/createRole.dto';
-import { BaseGuard } from '@user-mgmt-engine/jwt';
+import { BaseGuard } from '../guards';
+import { CurrentUserPayload } from '../types';
+import { UpdateRoleDTO } from './DTOs/updateRole.dto';
 
 describe('RoleController', () => {
   let controller: RoleController;
@@ -14,12 +16,10 @@ describe('RoleController', () => {
     {
       id: 'role_01',
       name: 'roleOne',
-      role: 'USER',
     },
     {
       id: 'role_02',
       name: 'roleTwo',
-      role: 'USER',
     },
   ];
 
@@ -57,7 +57,7 @@ describe('RoleController', () => {
   describe('getAllRoles', () => {
     it('should return an array of roles', (done) => {
       mockService.getAllRoles.mockReturnValueOnce(of(mockRoles));
-      controller.getAllRoles('testing@test.com').subscribe({
+      controller.getAllRoles().subscribe({
         next: (res) => {
           expect(mockService.getAllRoles).toHaveBeenCalledTimes(1);
           expect(Array.isArray(res)).toBeTruthy();
@@ -85,11 +85,14 @@ describe('RoleController', () => {
     const inputTemplate: CreateRoleDTO = {
       name: 'roleThree',
       permissionIds: ['permission_01', 'permission_02'],
-      role: RoleName.ADMIN,
+    };
+    const user: CurrentUserPayload = {
+      role: 'role_01',
+      sub: 'testing@test.com',
     };
     it('should return the created roles', (done) => {
       mockService.createRole.mockReturnValueOnce(of(mockRoles[0]));
-      controller.createRole(inputTemplate).subscribe({
+      controller.createRole(user, inputTemplate).subscribe({
         next: (res) => {
           expect(mockService.getAllRoles).toHaveBeenCalledTimes(1);
           expect(res).toMatchObject(mockRoles[0]);
@@ -101,9 +104,12 @@ describe('RoleController', () => {
 
   describe('updateRole', () => {
     const id = 'role_01';
+    const data: UpdateRoleDTO = {
+      name: 'newRoleName',
+    };
     it('should return Role', (done) => {
       mockService.updateRole.mockReturnValueOnce(of(mockRoles[0]));
-      controller.updateRole(id).subscribe({
+      controller.updateRole(id, data).subscribe({
         next: (res) => {
           expect(mockService.updateRole).toHaveBeenCalledTimes(1);
           expect(res).toMatchObject(mockRoles[0]);

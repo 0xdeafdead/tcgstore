@@ -68,30 +68,25 @@ export class UserRespository {
     });
   }
 
-  async getOne(findBy: Prisma.UserWhereUniqueInput, options?: GetUserOptions) {
-    const x = await this.prisma.user.findUnique({
+  async getOne(findBy: Prisma.UserWhereUniqueInput) {
+    return await this.prisma.user.findUnique({
       where: { ...findBy, disabled: false },
-      include: options.permissions
-        ? {
-            userRole: {
+      include: {
+        userRole: {
+          include: {
+            role: {
               include: {
-                role: {
+                permissions: {
                   include: {
-                    permissions: {
-                      include: {
-                        permission: options.permissions
-                          ? { select: { id: true, name: true } }
-                          : false,
-                      },
-                    },
+                    permission: { select: { id: true, name: true } },
                   },
                 },
               },
             },
-          }
-        : {},
+          },
+        },
+      },
     });
-    return x;
   }
 
   async getMany(filters: Prisma.UserFindManyArgs): Promise<User[]> {

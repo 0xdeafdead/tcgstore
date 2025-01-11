@@ -7,16 +7,17 @@ module.exports = {
   },
   plugins: [
     new NxAppWebpackPlugin({
-      target: 'node',
-      compiler: 'tsc',
+      // target: 'node',
+      // compiler: 'tsc',
       main: './src/main.ts',
       tsConfig: './tsconfig.app.json',
+      index: './src/index.ts',
       assets: ['./src/assets'],
       watch: true,
-      watchOptions: {
-        ignored: ['node_modules'],
-        poll: 1000,
-      },
+      // watchOptions: {
+      ignored: ['node_modules'],
+      poll: 1000,
+      // },
       optimization: process.env.APP_ENV === 'production',
       outputHashing: process.env.APP_ENV === 'production' ? 'all' : 'none',
     }),

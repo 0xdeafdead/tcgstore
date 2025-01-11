@@ -6,7 +6,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { RoleName } from '@prisma/client';
 
 export class CreateUserDTO {
   @ApiProperty({
@@ -32,7 +31,7 @@ export class CreateUserDTO {
   @IsNotEmpty()
   lastName: string;
 
-  @IsEnum(RoleName)
+  @IsString()
   @IsOptional()
-  role?: RoleName;
+  roleId: string;
 }

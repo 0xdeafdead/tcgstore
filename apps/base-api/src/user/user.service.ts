@@ -1,21 +1,14 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  Observable,
-  catchError,
-  from,
-  map,
-  of,
-  switchMap,
-  throwError,
-} from 'rxjs';
+import { catchError, from, of, switchMap, throwError } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { Prisma, RoleName } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { CreateUserDTO } from './DTOs/createUser.dto';
 import { UserRespository } from './user.repository';
 import { GetUserOptions } from './types';
 import { RoleRepository } from '../role/role.repository';
 import { UpdateUserDTO } from './DTOs/updateUser.dto';
+import { envs } from '../config';
 
 @Injectable()
 export class UserService {
@@ -35,7 +28,7 @@ export class UserService {
   }
 
   getOneUser(findBy: Prisma.UserWhereUniqueInput, options?: GetUserOptions) {
-    return from(this.repository.getOne(findBy, options)).pipe(
+    return from(this.repository.getOne(findBy)).pipe(
       switchMap((user) => {
         if (!user) {
           throw new NotFoundException('Could not find user with discriminator');
@@ -51,10 +44,10 @@ export class UserService {
   }
 
   createUser(input: CreateUserDTO) {
-    const { email, firstName, lastName, role } = input;
+    const { email, firstName, lastName, roleId } = input;
     return from(
       this.roleRepository.getOne({
-        role: role || RoleName.USER,
+        id: roleId || envs.user_role_id,
       })
     ).pipe(
       switchMap((role) =>

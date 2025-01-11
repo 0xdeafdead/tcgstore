@@ -3,8 +3,9 @@ import { AuthorizationService } from './authorization.service';
 import { UpdateUserRolesDTO } from '../DTOs/updateUserRole.dto';
 import { UpdateRolePermissionsDTO } from '../DTOs/updatePermissionFromRole.dto';
 import { CurrentUser } from '../../decorators/current-user.decorator';
-import { BaseGuard } from '@user-mgmt-engine/jwt';
 import { Observable } from 'rxjs';
+import { Role } from '@prisma/client';
+import { BaseGuard } from '../../guards';
 
 @Controller('authorization')
 export class AuthorizationController {
@@ -20,7 +21,7 @@ export class AuthorizationController {
   updateRolePermissions(
     @CurrentUser() user: string,
     @Body() input: UpdateRolePermissionsDTO
-  ): Observable<boolean> {
+  ): Observable<Role> {
     return this.service.updatePermissionsToRole(user, input);
   }
 }

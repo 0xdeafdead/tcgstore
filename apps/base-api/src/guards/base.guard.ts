@@ -7,7 +7,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JWTService } from '../jwt.service';
+import { JWTService } from '@user-mgmt-engine/jwt';
+import { envs } from '../config';
 
 @Injectable()
 export class BaseGuard implements CanActivate {
@@ -22,10 +23,12 @@ export class BaseGuard implements CanActivate {
     try {
       const payload = await this.jwtService.verifyToken(token, {
         algorithms: ['HS256'],
+        issuer: [envs.issuer],
+        audience: [envs.audience],
       });
       request['user'] = {
-        sub: payload?.sub,
-        permissions: payload?.['permissions'],
+        sub: payload.sub,
+        role: payload.role,
       };
       return true;
     } catch (error) {

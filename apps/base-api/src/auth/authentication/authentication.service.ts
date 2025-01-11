@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { Prisma, RoleName } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { JWTService } from '@user-mgmt-engine/jwt';
 import { catchError, from, Observable, switchMap, throwError } from 'rxjs';
 
@@ -16,6 +16,7 @@ import { PrismaTransactionClient } from '../../types';
 import { UserService } from '../../user/user.service';
 import { errorHandler } from '../../utils/errorHandler';
 import { PrismaService } from '../../prisma-service/prisma.service';
+import { envs } from '../../config';
 
 @Injectable()
 export class AuthenticationService {
@@ -55,12 +56,12 @@ export class AuthenticationService {
         }
         return this.jwtService.generateToken({
           sub: user.email,
+          role: user.userRole.roleId,
         });
       }),
       catchError((err) => {
         const errMsg = `The user or password is wrong`;
-        this.logger.error(errMsg + ` Error: ${err.message}`);
-        return throwError(() => errorHandler(err, errMsg));
+        return throwError(() => errorHandler(this.logger, err, errMsg));
       })
     );
   }
@@ -79,11 +80,10 @@ export class AuthenticationService {
         password: hashedPass,
       };
       (await tx?.credential.create({ data: input })) ??
-        this.prisma.credential.create({ data: input });
+        (await this.prisma.credential.create({ data: input }));
       return;
     } catch (err) {
       const errMsg = `Could not hash password for email ${email}.`;
-      this.logger.error(`${errMsg} Error: ${err.message}`);
       throw new Error(errMsg);
     }
   }
@@ -97,7 +97,7 @@ export class AuthenticationService {
       this.prisma.$transaction(async (tx) => {
         const role = await tx.role.findUnique({
           where: {
-            role: RoleName.USER,
+            id: envs.user_role_id,
           },
         });
         if (!role) {
@@ -121,14 +121,14 @@ export class AuthenticationService {
         await this.storePassword(email, password, tx);
         const token = await this.jwtService.generateToken({
           sub: user.email,
+          role: envs.user_role_id,
         });
         return token;
       })
     ).pipe(
       catchError((err) => {
         const errMsg = `Could not create user for email ${email}.`;
-        this.logger.error(errMsg + ` Error: ${err.message}`);
-        return throwError(() => errorHandler(err, errMsg));
+        return throwError(() => errorHandler(this.logger, err, errMsg));
       })
     );
   }

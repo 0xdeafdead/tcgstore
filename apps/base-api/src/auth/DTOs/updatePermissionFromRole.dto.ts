@@ -1,9 +1,9 @@
-import { RoleName } from '@prisma/client';
-import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateRolePermissionsDTO {
-  @IsEnum(RoleName)
-  role: RoleName;
+  @IsString()
+  @IsNotEmpty()
+  roleId: string;
 
   @IsArray()
   @IsString({ each: true })

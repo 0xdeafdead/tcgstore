@@ -6,9 +6,19 @@ import { AuthenticationController } from './authentication/authentication.contro
 import { AuthorizationService } from './authorization/authorization.service';
 import { AuthorizationController } from './authorization/authorization.controller';
 import { PrismaModule } from '../prisma-service/prisma.module';
+import { JWTModule } from '@user-mgmt-engine/jwt';
+import { envs } from '../config';
 
 @Module({
-  imports: [UserModule, PrismaModule],
+  imports: [
+    UserModule,
+    PrismaModule,
+    JWTModule.forRootAsync({
+      secret: envs.jwtSecret,
+      audience: [envs.audience],
+      issuer: envs.audience,
+    }),
+  ],
   providers: [AuthenticationService, AuthorizationService],
   controllers: [AuthenticationController, AuthorizationController],
 })

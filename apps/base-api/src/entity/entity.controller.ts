@@ -1,16 +1,7 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Entity } from '@prisma/client';
 import { Observable } from 'rxjs';
 import { EntityService } from './entity.service';
-import { ControllerGuard } from '../guards/controller.guard';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
