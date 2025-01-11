@@ -21,9 +21,9 @@ jobs:
         with:
           node-version: lts/iron
       - run: npm ci
-      - run: npx nx run-many --target=lint --parallel=false --base=origin/staging --verbose
-      - run: npx nx run-many --target=build --parallel=false --base=origin/staging --verbose
       - run: npx nx run-many --target=test --parallel=false --codeCoverage --verbose
+      - run: npx nx run-many --target=build --parallel=false --base=origin/staging --verbose
+      - run: npx nx run-many --target=lint --parallel=false --base=origin/staging --verbose
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
