@@ -1,9 +1,4 @@
-// import { getJestProjectsAsync } from '@nx/jest';
-
-// export default async () => ({
-//   projects: await getJestProjectsAsync(),
-// });
-export default {
+const options = {
   displayName: 'auth',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
@@ -16,3 +11,5 @@ export default {
   collectCoverageFrom: ['<rootDir>/src/**/*.[tj]s'],
   coverageReporters: ['lcov'],
 };
+
+export default options;
