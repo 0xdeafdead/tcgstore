@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default async () => ({
+export default {
   displayName: 'base-api',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
@@ -17,4 +17,4 @@ export default async () => ({
     '<rootDir>/src/decorators',
     '<rootDir>/src/config',
   ],
-});
+};
