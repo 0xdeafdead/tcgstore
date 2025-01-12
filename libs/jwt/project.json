@@ -19,7 +19,6 @@
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "dependsOn": ["build"],
       "options": {
         "jestConfig": "libs/jwt/jest.config.ts"
       }
