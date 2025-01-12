@@ -1,8 +1,3 @@
-// import { getJestProjectsAsync } from '@nx/jest';
-
-// export default async () => ({
-//   projects: await getJestProjectsAsync(),
-// });
 export default async () => ({
   displayName: 'auth',
   preset: '../../jest.preset.js',
