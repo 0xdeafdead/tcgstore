@@ -14,7 +14,6 @@ export default async () => ({
   coveragePathIgnorePatterns: [
     '<rootDir>/src/guards',
     '<rootDir>/src/.*.repository.*',
-    '<rootDir>/node_modules/',
     '<rootDir>/src/decorators',
   ],
 });
