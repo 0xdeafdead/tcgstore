@@ -1,5 +1,4 @@
 /* eslint-disable */
-// import { getJestProjectsAsync } from '@nx/jest';
 
 export default {
   displayName: 'base-api',
@@ -20,7 +19,3 @@ export default {
     '<rootDir>/src/config',
   ],
 };
-
-// export default async () => ({
-//   projects: [...(await getJestProjectsAsync())],
-// });
