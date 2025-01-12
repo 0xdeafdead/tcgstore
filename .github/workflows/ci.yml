@@ -12,6 +12,7 @@ on:
 jobs:
   build-lint-test:
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,6 +21,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/iron
+        env:
+          PORT: ${{ env.PORT}}
+          JWT_SECRET: ${{ env.JWT_SECRET}}
+          BASE_API_AUDIENCE: ${{env.BASE_API_AUDIENCE}}
+          BASE_API_ISSUER: ${{env.BASE_API_ISSUER}}
+          APP_ENV: ${{env.APP_ENV}}
+          USER_ROLE_ID: ${{env.USER_ROLE_ID}}
       - run: npm ci
       - run: npx prisma generate --schema=apps/base-api/prisma/schema.prisma
       - run: npx nx run-many --target=lint --parallel=5 --base=origin/staging --verbose
