@@ -1,10 +1,9 @@
-/*
- *
- *
- *
- *
- */
-export default async () => ({
+// import { getJestProjectsAsync } from '@nx/jest';
+
+// export default async () => ({
+//   projects: await getJestProjectsAsync(),
+// });
+export default {
   displayName: 'auth',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
@@ -16,4 +15,4 @@ export default async () => ({
   collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.[tj]s'],
   coverageReporters: ['lcov'],
-});
+};
