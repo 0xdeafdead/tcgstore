@@ -43,7 +43,6 @@
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "dependsOn": ["build"],
       "options": {
         "jestConfig": "apps/base-api/jest.config.ts"
       }
