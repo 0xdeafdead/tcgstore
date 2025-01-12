@@ -17,6 +17,7 @@ export default {
     '<rootDir>/src/guards',
     '<rootDir>/src/.*.repository.*',
     '<rootDir>/src/decorators',
+    '<rootDir>/src/config',
   ],
 };
 
