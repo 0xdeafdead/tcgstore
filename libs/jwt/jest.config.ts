@@ -1,5 +1,4 @@
 /* eslint-disable */
-// import { getJestProjectsAsync } from '@nx/jest';
 export default async () => ({
   displayName: 'auth',
   preset: '../../jest.preset.js',
@@ -13,6 +12,3 @@ export default async () => ({
   collectCoverageFrom: ['<rootDir>/src/**/*.[tj]s'],
   coverageReporters: ['lcov'],
 });
-// export default async () => ({
-//   projects: [...(await getJestProjectsAsync())],
-// });
