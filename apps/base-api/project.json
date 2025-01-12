@@ -44,7 +44,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/base-api/jest.config.ts"
+        "jestConfig": "apps/base-api/jest.config.json"
       }
     },
     "lint": {
